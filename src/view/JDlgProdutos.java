@@ -4,8 +4,6 @@
  */
 package view;
 
-import bean.Rps_Produtos;
-import dao.Rps_ProdutosDao;
 import java.awt.Color;
 import java.awt.Image;
 import javax.swing.ImageIcon;
@@ -18,6 +16,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.text.DefaultFormatterFactory;
 import javax.swing.text.MaskFormatter;
+import tools.Util;
 
 /**
  *
@@ -51,54 +50,13 @@ public class JDlgProdutos extends javax.swing.JDialog {
         background.setBounds(0, 0, getWidth(), getHeight());
         getContentPane().add(background);
         getContentPane().setComponentZOrder(background, getContentPane().getComponentCount() - 1);
-        habilitar(false);
+        Util.habilitar(false, jBtnConfirmar, jBtnCancelar, jTxtCodigoJogo, jTxtNomeJogo, jTxtQuantEstoque, jFmtAnoLançamento, jFmtValor, jCboGeneroJogo, jCboPlataforma);
         try {
             mascaraDataNasc = new MaskFormatter("##/##/####");
             jFmtAnoLançamento.setFormatterFactory(new DefaultFormatterFactory(mascaraDataNasc));
         } catch (ParseException ex) {
             Logger.getLogger(JDlgProdutos.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }
-
-    public void habilitar(boolean valor) {
-        jBtnConfirmar.setEnabled(valor);
-        jBtnCancelar.setEnabled(valor);
-        jTxtCodigoJogo.setEnabled(valor);
-        jTxtNomeJogo.setEnabled(valor);
-        jTxtQuantEstoque.setEnabled(valor);
-        jFmtAnoLançamento.setEnabled(valor);
-        jFmtValor.setEnabled(valor);
-        jCboGeneroJogo.setEnabled(valor);
-        jCboPlataforma.setEnabled(valor);
-
-        jBtnIncluir.setEnabled(!valor);
-        jBtnAlterar.setEnabled(!valor);
-        jBtnExcluir.setEnabled(!valor);
-        jBtnPesquisar.setEnabled(!valor);
-    }
-
-    public void limpar() {
-        jTxtCodigoJogo.setText("");
-        jTxtNomeJogo.setText("");
-        jTxtQuantEstoque.setText("");
-        jFmtAnoLançamento.setText("");
-        jFmtValor.setText("");
-        jCboGeneroJogo.setSelectedIndex(-1);
-        jCboPlataforma.setSelectedIndex(-1);
-    }
-
-    public void beanView(Rps_Produtos produtos) {
-        String codigo = String.valueOf(produtos.getRps_idJogo());
-        jTxtCodigoJogo.setText(codigo);
-        jTxtNomeJogo.setText(produtos.getRps_nome());
-        jTxtQuantEstoque.setText(produtos.getRps_quantEstoque());
-        jFmtValor.setText(produtos.getRps_valor());
-        SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
-        String dataNasc = formato.format(produtos.getRps_anoLancamento());
-        jFmtAnoLançamento.setText(dataNasc);
-        jCboGeneroJogo.setSelectedIndex(produtos.getRps_genero());
-        jCboPlataforma.setSelectedIndex(produtos.getRps_plataforma());
-
     }
 
     /**
@@ -321,9 +279,9 @@ public class JDlgProdutos extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jBtnIncluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnIncluirActionPerformed
-        habilitar(true);
-        limpar();
-        incluir = true;
+        Util.habilitar(true, jBtnConfirmar, jBtnCancelar, jTxtCodigoJogo, jTxtNomeJogo, jTxtQuantEstoque, jFmtAnoLançamento, jFmtValor, jCboGeneroJogo, jCboPlataforma);
+        Util.limpar(jTxtCodigoJogo, jTxtNomeJogo, jTxtQuantEstoque, jFmtAnoLançamento, jFmtValor, jCboGeneroJogo, jCboPlataforma);
+        Util.habilitar(false, jBtnIncluir, jBtnExcluir, jBtnAlterar, jBtnPesquisar);
         jTxtCodigoJogo.grabFocus();
     }//GEN-LAST:event_jBtnIncluirActionPerformed
 
@@ -348,47 +306,21 @@ public class JDlgProdutos extends javax.swing.JDialog {
     }//GEN-LAST:event_jFmtValorActionPerformed
 
     private void jBtnConfirmarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnConfirmarActionPerformed
-        // TODO add your handling code here:
-        Rps_Produtos produtos = new Rps_Produtos();
-        int cod = Integer.parseInt(jTxtCodigoJogo.getText());
-        produtos.setRps_idJogo(cod);
-        produtos.setRps_nome(jTxtNomeJogo.getText());
-        produtos.setRps_quantEstoque(jTxtQuantEstoque.getText());
-        produtos.setRps_valor(jFmtValor.getText());
-        SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
-        try {
-            Date dataLancamento = formato.parse(jFmtAnoLançamento.getText());
-            produtos.setRps_anoLancamento(dataLancamento);
-        } catch (ParseException ex) {
-            Logger.getLogger(JDlgProdutos.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        produtos.setRps_genero(jCboGeneroJogo.getSelectedIndex());
-        produtos.setRps_plataforma(jCboPlataforma.getSelectedIndex());
-
-        Rps_ProdutosDao produtosDao = new Rps_ProdutosDao();
-
-        if (incluir == true) {
-            produtosDao.insert(produtos);
-        } else {
-            produtosDao.update(produtos);
-        }
-        habilitar(false);
-        limpar();
+        Util.habilitar(false, jBtnConfirmar, jBtnCancelar, jTxtCodigoJogo, jTxtNomeJogo, jTxtQuantEstoque, jFmtAnoLançamento, jFmtValor, jCboGeneroJogo, jCboPlataforma);
+        Util.habilitar(true, jBtnIncluir, jBtnExcluir, jBtnAlterar, jBtnPesquisar);
+        Util.limpar(jTxtCodigoJogo, jTxtNomeJogo, jTxtQuantEstoque, jFmtAnoLançamento, jFmtValor, jCboGeneroJogo, jCboPlataforma);
     }//GEN-LAST:event_jBtnConfirmarActionPerformed
 
     private void jBtnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnCancelarActionPerformed
-        habilitar(false);
-        limpar();
+        Util.habilitar(false, jBtnConfirmar, jBtnCancelar, jTxtCodigoJogo, jTxtNomeJogo, jTxtQuantEstoque, jFmtAnoLançamento, jFmtValor, jCboGeneroJogo, jCboPlataforma);
+        Util.habilitar(true, jBtnIncluir, jBtnExcluir, jBtnAlterar, jBtnPesquisar);
+        Util.limpar(jTxtCodigoJogo, jTxtNomeJogo, jTxtQuantEstoque, jFmtAnoLançamento, jFmtValor, jCboGeneroJogo, jCboPlataforma);
     }//GEN-LAST:event_jBtnCancelarActionPerformed
 
     private void jBtnAlterarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnAlterarActionPerformed
-        if (jTxtCodigoJogo.getText().trim().isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Pesquise um Produto antes de Alterar");
-            return;
-        }
-        incluir = false;
-        habilitar(true);
-        jTxtCodigoJogo.setEnabled(false);
+        Util.habilitar(true, jBtnConfirmar, jBtnCancelar, jTxtCodigoJogo, jTxtNomeJogo, jTxtQuantEstoque, jFmtAnoLançamento, jFmtValor, jCboGeneroJogo, jCboPlataforma);
+        Util.habilitar(false, jBtnIncluir, jBtnExcluir, jBtnAlterar, jBtnPesquisar);
+        Util.habilitar(false, jTxtCodigoJogo);
         jTxtNomeJogo.grabFocus();
     }//GEN-LAST:event_jBtnAlterarActionPerformed
 
@@ -399,32 +331,9 @@ public class JDlgProdutos extends javax.swing.JDialog {
     }//GEN-LAST:event_jBtnPesquisarActionPerformed
 
     private void jBtnExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnExcluirActionPerformed
-        if (jTxtCodigoJogo.getText().trim().isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Pesquise um Produto antes de Excluir");
-            return;
-        }
-        int resp = JOptionPane.showConfirmDialog(null, "Deseja excluir ?");
-        if (resp == JOptionPane.YES_OPTION) {
-            Rps_Produtos produtos = new Rps_Produtos();
-            int cod = Integer.parseInt(jTxtCodigoJogo.getText());
-            produtos.setRps_idJogo(cod);
-            produtos.setRps_nome(jTxtNomeJogo.getText());
-            produtos.setRps_quantEstoque(jTxtQuantEstoque.getText());
-            produtos.setRps_valor(jFmtValor.getText());
-            SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
-            try {
-                Date dataLancamento = formato.parse(jFmtAnoLançamento.getText());
-                produtos.setRps_anoLancamento(dataLancamento);
-            } catch (ParseException ex) {
-                Logger.getLogger(JDlgProdutos.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            produtos.setRps_genero(jCboGeneroJogo.getSelectedIndex());
-            produtos.setRps_plataforma(jCboPlataforma.getSelectedIndex());
+        if (Util.pergunta("Deseja excluir?")) {
 
-            Rps_ProdutosDao produtosDao = new Rps_ProdutosDao();
-            produtosDao.delete(produtos);
         }
-        limpar();
     }//GEN-LAST:event_jBtnExcluirActionPerformed
 
     /**

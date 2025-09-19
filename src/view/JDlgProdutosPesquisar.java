@@ -4,8 +4,6 @@
  */
 package view;
 
-import bean.Rps_Produtos;
-import dao.Rps_ProdutosDao;
 import java.util.List;
 
 /**
@@ -15,7 +13,6 @@ import java.util.List;
 public class JDlgProdutosPesquisar extends javax.swing.JDialog {
 
     JDlgProdutos jDlgProdutos;
-    ControllerProdutos controllerProdutos;
 
     /**
      * Creates new form JDlgProdutosPesquisar
@@ -24,11 +21,7 @@ public class JDlgProdutosPesquisar extends javax.swing.JDialog {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(null);
-        Rps_ProdutosDao produtosDao = new Rps_ProdutosDao();
-        List lista = (List) produtosDao.listAll();
-        controllerProdutos = new ControllerProdutos();
-        controllerProdutos.setList(lista);
-        jTable1.setModel(controllerProdutos);
+        setTitle("TABELA DE PESQUISA DE USUÁRIOS");
     }
 
     public void setTelaPai(JDlgProdutos jDlgProdutos) {
@@ -96,8 +89,6 @@ public class JDlgProdutosPesquisar extends javax.swing.JDialog {
 
     private void jBtnOkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnOkActionPerformed
         int linSel = jTable1.getSelectedRow();
-        Rps_Produtos produtos = (Rps_Produtos) controllerProdutos.getBean(linSel);
-        jDlgProdutos.beanView(produtos);
         setVisible(false);
     }//GEN-LAST:event_jBtnOkActionPerformed
 
