@@ -48,8 +48,15 @@ public class Util {
     }
 
     public static boolean pergunta(String cad) {
-        JOptionPane.showConfirmDialog(null, cad);
-        return true;
+        int opcao = JOptionPane.showConfirmDialog(
+                null,
+                cad,
+                "EXCLUIR",
+                JOptionPane.YES_NO_OPTION, // só mostra "Sim" e "Não"
+                JOptionPane.QUESTION_MESSAGE
+        );
+
+        return opcao == JOptionPane.YES_OPTION;
     }
 
     public static int strToInt(String num) {
@@ -69,14 +76,14 @@ public class Util {
         return String.valueOf(num);
     }
 
-    public static Date strToDate(String data) throws Exception  {
+    public static Date strToDate(String data) throws Exception {
         return new SimpleDateFormat("dd/MM/yyyy").parse(data);
 
     }
 
-   public static String dateToStr(Date data) {
+    public static String dateToStr(Date data) {
         return new SimpleDateFormat("dd/MM/yyyy").format(data);
- 
+
     }
 
 }

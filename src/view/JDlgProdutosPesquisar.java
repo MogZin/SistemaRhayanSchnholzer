@@ -21,7 +21,7 @@ public class JDlgProdutosPesquisar extends javax.swing.JDialog {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(null);
-        setTitle("TABELA DE PESQUISA DE USUÁRIOS");
+        setTitle("TABELA DE PESQUISA DE PRODUTOS");
     }
 
     public void setTelaPai(JDlgProdutos jDlgProdutos) {

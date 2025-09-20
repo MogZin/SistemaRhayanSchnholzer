@@ -4,8 +4,6 @@
  */
 package view;
 
-import bean.Rps_Clientes;
-import dao.Rps_ClientesDao;
 import java.awt.Color;
 import java.awt.Image;
 import javax.swing.ImageIcon;
@@ -18,6 +16,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.text.DefaultFormatterFactory;
 import javax.swing.text.MaskFormatter;
+import tools.Util;
 
 /**
  *
@@ -29,7 +28,7 @@ public class JDlgClientes extends javax.swing.JDialog {
      * Creates new form jDlgClientes
      */
     boolean incluir = false;
-    private MaskFormatter mascaraCpf, mascaraTel, mascaraCep, mascaraDataNasc, mascaraDataCad; 
+    private MaskFormatter mascaraCpf, mascaraTel, mascaraCep, mascaraDataNasc, mascaraDataCad;
 
     public JDlgClientes(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
@@ -63,7 +62,7 @@ public class JDlgClientes extends javax.swing.JDialog {
         background.setBounds(0, 0, getWidth(), getHeight());
         getContentPane().add(background);
         getContentPane().setComponentZOrder(background, getContentPane().getComponentCount() - 1);
-        habilitar(false);
+        Util.habilitar(false, jBtnConfirmar, jBtnCancelar, jTxtCodigo, jTxtNome, jTxtBairro, jTxtCidade, jFmtCpf, jFmtDataNascimento, jFmtCep, jFmtDataCadastro, jFmtEmail, jFmtSaldoConta, jFmtTelefone, jCboEstado, jCboGenero, jCboTipoCliente, jChbAtivo, jPwdSenha);
         try {
             mascaraCpf = new MaskFormatter("###.###.###-##");
             mascaraTel = new MaskFormatter("(##)#####-####");
@@ -78,79 +77,6 @@ public class JDlgClientes extends javax.swing.JDialog {
         } catch (ParseException ex) {
             Logger.getLogger(JDlgClientes.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }
-
-    public void habilitar(boolean valor) {
-        jBtnConfirmar.setEnabled(valor);
-        jBtnCancelar.setEnabled(valor);
-        jTxtCodigo.setEnabled(valor);
-        jTxtNome.setEnabled(valor);
-        jTxtBairro.setEnabled(valor);
-        jTxtCidade.setEnabled(valor);
-        jFmtCep.setEnabled(valor);
-        jFmtCpf.setEnabled(valor);
-        jFmtDataCadastro.setEnabled(valor);
-        jFmtDataNascimento.setEnabled(valor);
-        jFmtEmail.setEnabled(valor);
-        jFmtSaldoConta.setEnabled(valor);
-        jFmtTelefone.setEnabled(valor);
-        jPwdSenha.setEnabled(valor);
-        jCboEstado.setEnabled(valor);
-        jCboGenero.setEnabled(valor);
-        jCboTipoCliente.setEnabled(valor);
-        jChbAtivo.setEnabled(valor);
-
-        jBtnIncluir.setEnabled(!valor);
-        jBtnAlterar.setEnabled(!valor);
-        jBtnExcluir.setEnabled(!valor);
-        jBtnPesquisar.setEnabled(!valor);
-    }
-
-    public void limpar() {
-        jTxtCodigo.setText("");
-        jTxtNome.setText("");
-        jTxtBairro.setText("");
-        jTxtCidade.setText("");
-        jFmtCpf.setText("");
-        jFmtCep.setText("");
-        jFmtDataCadastro.setText("");
-        jFmtEmail.setText("");
-        jFmtSaldoConta.setText("");
-        jFmtTelefone.setText("");
-        jFmtDataNascimento.setText("");
-        jPwdSenha.setText("");
-        jCboEstado.setSelectedIndex(-1);
-        jCboGenero.setSelectedIndex(-1);
-        jCboTipoCliente.setSelectedIndex(-1);
-        jChbAtivo.setSelected(false);
-    }
-
-    public void beanView(Rps_Clientes clientes) {
-        String codigo = String.valueOf(clientes.getRps_idclientes());
-        jTxtCodigo.setText(codigo);
-        jTxtNome.setText(clientes.getRps_nome());
-        jTxtBairro.setText(clientes.getRps_bairro());
-        jTxtCidade.setText(clientes.getRps_cidade());
-        jFmtCpf.setText(clientes.getRps_cpf());
-        jFmtCep.setText(clientes.getRps_cep());
-        jFmtEmail.setText(clientes.getRps_email());
-        jFmtTelefone.setText(clientes.getRps_telefone());
-        jFmtSaldoConta.setText(clientes.getRps_saldoConta());
-        SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
-        String dataNasc = formato.format(clientes.getRps_dataNascimento());
-        String dataCadastro = formato.format(clientes.getRps_dataCadastro());
-        jFmtDataNascimento.setText(dataNasc);
-        jFmtDataCadastro.setText(dataCadastro);
-        jPwdSenha.setText(clientes.getRps_senha());
-        jCboEstado.setSelectedIndex(clientes.getRps_estado());
-        jCboGenero.setSelectedIndex(clientes.getRps_genero());
-        jCboTipoCliente.setSelectedIndex(clientes.getRps_tipoCliente());
-        if (clientes.getRps_ativo().equals("S")) {
-            jChbAtivo.setSelected(true);
-        } else {
-            jChbAtivo.setSelected(false);
-        }
-
     }
 
     /**
@@ -507,9 +433,9 @@ public class JDlgClientes extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jBtnIncluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnIncluirActionPerformed
-        habilitar(true);
-        limpar();
-        incluir = true;
+        Util.habilitar(true, jBtnConfirmar, jBtnCancelar, jTxtCodigo, jTxtNome, jTxtBairro, jTxtCidade, jFmtCpf, jFmtDataNascimento, jFmtCep, jFmtDataCadastro, jFmtEmail, jFmtSaldoConta, jFmtTelefone, jCboEstado, jCboGenero, jCboTipoCliente, jChbAtivo, jPwdSenha);
+        Util.limpar(jTxtCodigo, jTxtNome, jTxtBairro, jTxtCidade, jFmtCpf, jFmtDataNascimento, jFmtCep, jFmtDataCadastro, jFmtEmail, jFmtSaldoConta, jFmtTelefone, jCboEstado, jCboGenero, jCboTipoCliente, jChbAtivo, jPwdSenha);
+        Util.habilitar(false, jBtnIncluir, jBtnExcluir, jBtnAlterar, jBtnPesquisar);
         jTxtCodigo.grabFocus();
     }//GEN-LAST:event_jBtnIncluirActionPerformed
 
@@ -542,64 +468,21 @@ public class JDlgClientes extends javax.swing.JDialog {
     }//GEN-LAST:event_jFmtDataCadastroActionPerformed
 
     private void jBtnConfirmarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnConfirmarActionPerformed
-        // TODO add your handling code here:
-        Rps_Clientes clientes = new Rps_Clientes();
-        int cod = Integer.parseInt(jTxtCodigo.getText());
-        clientes.setRps_idclientes(cod);
-        clientes.setRps_nome(jTxtNome.getText());
-        clientes.setRps_bairro(jTxtBairro.getText());
-        clientes.setRps_cidade(jTxtCidade.getText());
-        clientes.setRps_cep(jFmtCep.getText());
-        clientes.setRps_cpf(jFmtCpf.getText());
-        clientes.setRps_email(jFmtEmail.getText());
-        clientes.setRps_saldoConta(jFmtSaldoConta.getText());
-        clientes.setRps_telefone(jFmtTelefone.getText());
-        SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
-        try {
-            Date dataNasc = formato.parse(jFmtDataNascimento.getText());
-            clientes.setRps_dataNascimento(dataNasc);
-        } catch (ParseException ex) {
-            Logger.getLogger(JDlgClientes.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        try {
-            Date dataCadastro = formato.parse(jFmtDataCadastro.getText());
-            clientes.setRps_dataCadastro(dataCadastro);
-        } catch (ParseException ex) {
-            Logger.getLogger(JDlgClientes.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        clientes.setRps_senha(jPwdSenha.getText());
-        clientes.setRps_estado(jCboEstado.getSelectedIndex());
-        clientes.setRps_genero(jCboGenero.getSelectedIndex());
-        clientes.setRps_tipoCliente(jCboTipoCliente.getSelectedIndex());
-        if (jChbAtivo.isSelected() == true) {
-            clientes.setRps_ativo("S");
-        } else {
-            clientes.setRps_ativo("N");
-        }
-        Rps_ClientesDao clientesDao = new Rps_ClientesDao();
-
-        if (incluir == true) {
-            clientesDao.insert(clientes);
-        } else {
-            clientesDao.update(clientes);
-        }
-        habilitar(false);
-        limpar();
+        Util.habilitar(false, jBtnConfirmar, jBtnCancelar, jTxtCodigo, jTxtNome, jTxtBairro, jTxtCidade, jFmtCpf, jFmtDataNascimento, jFmtCep, jFmtDataCadastro, jFmtEmail, jFmtSaldoConta, jFmtTelefone, jCboEstado, jCboGenero, jCboTipoCliente, jChbAtivo, jPwdSenha);
+        Util.habilitar(true, jBtnIncluir, jBtnExcluir, jBtnAlterar, jBtnPesquisar);
+        Util.limpar(jTxtCodigo, jTxtNome, jTxtBairro, jTxtCidade, jFmtCpf, jFmtDataNascimento, jFmtCep, jFmtDataCadastro, jFmtEmail, jFmtSaldoConta, jFmtTelefone, jCboEstado, jCboGenero, jCboTipoCliente, jChbAtivo, jPwdSenha);
     }//GEN-LAST:event_jBtnConfirmarActionPerformed
 
     private void jBtnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnCancelarActionPerformed
-        habilitar(false);
-        limpar();
+        Util.habilitar(false, jBtnConfirmar, jBtnCancelar, jTxtCodigo, jTxtNome, jTxtBairro, jTxtCidade, jFmtCpf, jFmtDataNascimento, jFmtCep, jFmtDataCadastro, jFmtEmail, jFmtSaldoConta, jFmtTelefone, jCboEstado, jCboGenero, jCboTipoCliente, jChbAtivo, jPwdSenha);
+        Util.habilitar(true, jBtnIncluir, jBtnExcluir, jBtnAlterar, jBtnPesquisar);
+        Util.limpar(jTxtCodigo, jTxtNome, jTxtBairro, jTxtCidade, jFmtCpf, jFmtDataNascimento, jFmtCep, jFmtDataCadastro, jFmtEmail, jFmtSaldoConta, jFmtTelefone, jCboEstado, jCboGenero, jCboTipoCliente, jChbAtivo, jPwdSenha);
     }//GEN-LAST:event_jBtnCancelarActionPerformed
 
     private void jBtnAlterarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnAlterarActionPerformed
-        if (jTxtCodigo.getText().trim().isEmpty()) {
-        JOptionPane.showMessageDialog(null, "Pesquise um Cliente antes de Alterar");
-        return;
-    }
-        habilitar(true);
-        incluir = false;
-        jTxtCodigo.setEnabled(false);
+        Util.habilitar(true, jBtnConfirmar, jBtnCancelar, jTxtCodigo, jTxtNome, jTxtBairro, jTxtCidade, jFmtCpf, jFmtDataNascimento, jFmtCep, jFmtDataCadastro, jFmtEmail, jFmtSaldoConta, jFmtTelefone, jCboEstado, jCboGenero, jCboTipoCliente, jChbAtivo, jPwdSenha);
+        Util.habilitar(false, jBtnIncluir, jBtnExcluir, jBtnAlterar, jBtnPesquisar);
+        Util.habilitar(false, jTxtCodigo);
         jTxtNome.grabFocus();
     }//GEN-LAST:event_jBtnAlterarActionPerformed
 
@@ -608,49 +491,9 @@ public class JDlgClientes extends javax.swing.JDialog {
     }//GEN-LAST:event_jFmtEmailActionPerformed
 
     private void jBtnExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnExcluirActionPerformed
-        if (jTxtCodigo.getText().trim().isEmpty()) {
-        JOptionPane.showMessageDialog(null, "Pesquise um Cliente antes de excluir");
-        return;
-    }
-        int resp = JOptionPane.showConfirmDialog(null, "Deseja excluir ?");
-        if (resp == JOptionPane.YES_OPTION) {
-            Rps_Clientes clientes = new Rps_Clientes();
-            int cod = Integer.parseInt(jTxtCodigo.getText());
-            clientes.setRps_idclientes(cod);
-            clientes.setRps_nome(jTxtNome.getText());
-            clientes.setRps_bairro(jTxtBairro.getText());
-            clientes.setRps_cidade(jTxtCidade.getText());
-            clientes.setRps_cep(jFmtCep.getText());
-            clientes.setRps_cpf(jFmtCpf.getText());
-            clientes.setRps_email(jFmtEmail.getText());
-            clientes.setRps_saldoConta(jFmtSaldoConta.getText());
-            clientes.setRps_telefone(jFmtTelefone.getText());
-            SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
-            try {
-                Date dataCadastro = formato.parse(jFmtDataCadastro.getText());
-                clientes.setRps_dataCadastro(dataCadastro);
-            } catch (ParseException ex) {
-                Logger.getLogger(JDlgClientes.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            try {
-                Date dataNasc = formato.parse(jFmtDataNascimento.getText());
-                clientes.setRps_dataNascimento(dataNasc);
-            } catch (ParseException ex) {
-                Logger.getLogger(JDlgUsuarios.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            clientes.setRps_senha(jPwdSenha.getText());
-            clientes.setRps_estado(jCboEstado.getSelectedIndex());
-            clientes.setRps_genero(jCboGenero.getSelectedIndex());
-            clientes.setRps_tipoCliente(jCboTipoCliente.getSelectedIndex());
-            if (jChbAtivo.isSelected() == true) {
-                clientes.setRps_ativo("S");
-            } else {
-                clientes.setRps_ativo("N");
-            }
-            Rps_ClientesDao clientesDao = new Rps_ClientesDao();
-            clientesDao.delete(clientes);
+        if (Util.pergunta("Deseja excluir?")) {
+
         }
-        limpar();
     }//GEN-LAST:event_jBtnExcluirActionPerformed
 
     private void jBtnPesquisarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnPesquisarActionPerformed

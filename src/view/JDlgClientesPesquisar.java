@@ -4,8 +4,6 @@
  */
 package view;
 
-import bean.Rps_Clientes;
-import dao.Rps_ClientesDao;
 import java.util.List;
 
 /**
@@ -15,24 +13,21 @@ import java.util.List;
 public class JDlgClientesPesquisar extends javax.swing.JDialog {
 
     JDlgClientes jDlgClientes;
-    ControllerClientes controllerClientes;
+
     /**
      * Creates new form JDlgClientesPesquisar
      */
     public JDlgClientesPesquisar(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
-        initComponents();        
+        initComponents();
         setLocationRelativeTo(null);
-        Rps_ClientesDao clientesDao = new Rps_ClientesDao();
-        List lista = (List) clientesDao.listAll();
-        controllerClientes = new ControllerClientes();
-        controllerClientes.setList(lista);
-        jTable1.setModel(controllerClientes);
+        setTitle("TABELA DE PESQUISA DE PRODUTOS");
     }
 
-    public void setTelaPai(JDlgClientes jDlgClientes){
-       this.jDlgClientes = jDlgClientes;
+    public void setTelaPai(JDlgClientes jDlgClientes) {
+        this.jDlgClientes = jDlgClientes;
     }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -95,8 +90,6 @@ public class JDlgClientesPesquisar extends javax.swing.JDialog {
     private void jBtnOkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnOkActionPerformed
         // TODO add your handling code here:
         int linSel = jTable1.getSelectedRow();
-        Rps_Clientes clientes = (Rps_Clientes) controllerClientes.getBean(linSel);
-        jDlgClientes.beanView(clientes);
         setVisible(false);
     }//GEN-LAST:event_jBtnOkActionPerformed
 
