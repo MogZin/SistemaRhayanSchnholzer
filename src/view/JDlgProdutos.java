@@ -8,25 +8,15 @@ import java.awt.Color;
 import java.awt.Image;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.text.DefaultFormatterFactory;
 import javax.swing.text.MaskFormatter;
 import tools.Util;
 
-/**
- *
- * @author bruno
- */
 public class JDlgProdutos extends javax.swing.JDialog {
 
-    /**
-     * Creates new form JDlgProduto
-     */
     boolean incluir = false;
     private MaskFormatter mascaraDataNasc;
 
@@ -283,6 +273,7 @@ public class JDlgProdutos extends javax.swing.JDialog {
         Util.limpar(jTxtCodigoJogo, jTxtNomeJogo, jTxtQuantEstoque, jFmtAnoLançamento, jFmtValor, jCboGeneroJogo, jCboPlataforma);
         Util.habilitar(false, jBtnIncluir, jBtnExcluir, jBtnAlterar, jBtnPesquisar);
         jTxtCodigoJogo.grabFocus();
+        incluir = true;
     }//GEN-LAST:event_jBtnIncluirActionPerformed
 
     private void jTxtCodigoJogoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTxtCodigoJogoActionPerformed
@@ -309,6 +300,12 @@ public class JDlgProdutos extends javax.swing.JDialog {
         Util.habilitar(false, jBtnConfirmar, jBtnCancelar, jTxtCodigoJogo, jTxtNomeJogo, jTxtQuantEstoque, jFmtAnoLançamento, jFmtValor, jCboGeneroJogo, jCboPlataforma);
         Util.habilitar(true, jBtnIncluir, jBtnExcluir, jBtnAlterar, jBtnPesquisar);
         Util.limpar(jTxtCodigoJogo, jTxtNomeJogo, jTxtQuantEstoque, jFmtAnoLançamento, jFmtValor, jCboGeneroJogo, jCboPlataforma);
+        Util.strToInt(jTxtCodigoJogo.getText());
+        try {
+            Util.strToDate(jFmtAnoLançamento.getText());
+        } catch (ParseException ex) {
+            Logger.getLogger(JDlgProdutos.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_jBtnConfirmarActionPerformed
 
     private void jBtnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnCancelarActionPerformed
@@ -322,6 +319,7 @@ public class JDlgProdutos extends javax.swing.JDialog {
         Util.habilitar(false, jBtnIncluir, jBtnExcluir, jBtnAlterar, jBtnPesquisar);
         Util.habilitar(false, jTxtCodigoJogo);
         jTxtNomeJogo.grabFocus();
+        incluir = false;
     }//GEN-LAST:event_jBtnAlterarActionPerformed
 
     private void jBtnPesquisarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnPesquisarActionPerformed
@@ -334,6 +332,13 @@ public class JDlgProdutos extends javax.swing.JDialog {
         if (Util.pergunta("Deseja excluir?")) {
 
         }
+        Util.strToInt(jTxtCodigoJogo.getText());
+        try {
+            Util.strToDate(jFmtAnoLançamento.getText());
+        } catch (ParseException ex) {
+            Logger.getLogger(JDlgProdutos.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        Util.limpar(jTxtCodigoJogo, jTxtNomeJogo, jTxtQuantEstoque, jFmtAnoLançamento, jFmtValor, jCboGeneroJogo, jCboPlataforma);
     }//GEN-LAST:event_jBtnExcluirActionPerformed
 
     /**

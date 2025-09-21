@@ -4,24 +4,15 @@
  */
 package view;
 
-import java.util.List;
-
-/**
- *
- * @author bruno
- */
 public class JDlgProdutosPesquisar extends javax.swing.JDialog {
 
     JDlgProdutos jDlgProdutos;
 
-    /**
-     * Creates new form JDlgProdutosPesquisar
-     */
     public JDlgProdutosPesquisar(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(null);
-        setTitle("TABELA DE PESQUISA DE PRODUTOS");
+        setTitle("Tabela de Pesquisa de Produtos");
     }
 
     public void setTelaPai(JDlgProdutos jDlgProdutos) {

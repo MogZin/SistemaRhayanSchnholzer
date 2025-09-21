@@ -35,7 +35,7 @@ public class JFrmPrincipal extends javax.swing.JFrame {
             Clip clip = AudioSystem.getClip();
             clip.open(audioStream);
             //clip.start(); // toca uma vez só 
-            clip.loop(Clip.LOOP_CONTINUOUSLY); // toca em loop infinito
+            clip.loop(Clip.LOOP_CONTINUOUSLY); // toca em loop infinivo
         } catch (Exception e) {
             e.printStackTrace();
         }
