@@ -4,23 +4,14 @@
  */
 package view;
 
-import java.util.List;
-
-/**
- *
- * @author bruno
- */
 public class JDlgVendedorPesquisar extends javax.swing.JDialog {
 
     JDlgVendedor jDlgVendedor;
 
-    /**
-     * Creates new form JDlgVendedorPesquisar
-     */
     public JDlgVendedorPesquisar(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
-        setTitle("TABELA DE PESQUISA DE VENDEDORES");
+        setTitle("Tabela de Pesquisa de Vendedores");
         setLocationRelativeTo(null);
     }
 

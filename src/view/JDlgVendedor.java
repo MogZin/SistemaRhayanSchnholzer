@@ -8,22 +8,16 @@ import java.awt.Color;
 import java.awt.Image;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.text.DefaultFormatterFactory;
 import javax.swing.text.MaskFormatter;
 import tools.Util;
 
-/**
- *
- * @author bruno
- */
 public class JDlgVendedor extends javax.swing.JDialog {
 
+    boolean incluir = false;
     private MaskFormatter mascaraCpf, mascaraTel, mascaraDataContratacao;
 
     public JDlgVendedor(java.awt.Frame parent, boolean modal) {
@@ -265,6 +259,7 @@ public class JDlgVendedor extends javax.swing.JDialog {
         Util.limpar(jTxtCodigo, jTxtNome, jTxtSalario, jFmtCpf, jFmtDataContratacao, jFmtEmail, jFmtTelefone);
         Util.habilitar(false, jBtnIncluir, jBtnExcluir, jBtnAlterar, jBtnPesquisar);
         jTxtCodigo.grabFocus();
+        incluir = true;
     }//GEN-LAST:event_jBtnIncluirActionPerformed
 
     private void jBtnAlterarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnAlterarActionPerformed
@@ -272,18 +267,33 @@ public class JDlgVendedor extends javax.swing.JDialog {
         Util.habilitar(false, jBtnIncluir, jBtnExcluir, jBtnAlterar, jBtnPesquisar);
         Util.habilitar(false, jTxtCodigo);
         jTxtNome.grabFocus();
+        incluir = false;
     }//GEN-LAST:event_jBtnAlterarActionPerformed
 
     private void jBtnExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnExcluirActionPerformed
         if (Util.pergunta("Deseja excluir?")) {
 
         }
+        Util.strToInt(jTxtCodigo.getText());
+        try {
+            Util.strToDate(jFmtDataContratacao.getText());
+        } catch (ParseException ex) {
+            Logger.getLogger(JDlgVendedor.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        Util.limpar(jTxtCodigo, jTxtNome, jTxtSalario, jFmtCpf, jFmtDataContratacao, jFmtEmail, jFmtTelefone);
     }//GEN-LAST:event_jBtnExcluirActionPerformed
 
     private void jBtnConfirmarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnConfirmarActionPerformed
         Util.habilitar(false, jBtnConfirmar, jBtnCancelar, jTxtCodigo, jTxtNome, jTxtSalario, jFmtCpf, jFmtDataContratacao, jFmtEmail, jFmtTelefone);
         Util.habilitar(true, jBtnIncluir, jBtnExcluir, jBtnAlterar, jBtnPesquisar);
         Util.limpar(jTxtCodigo, jTxtNome, jTxtSalario, jFmtCpf, jFmtDataContratacao, jFmtEmail, jFmtTelefone);
+        Util.strToInt(jTxtCodigo.getText());
+        try {
+            Util.strToDate(jFmtDataContratacao.getText());
+        } catch (ParseException ex) {
+            Logger.getLogger(JDlgVendedor.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
     }//GEN-LAST:event_jBtnConfirmarActionPerformed
 
     private void jBtnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnCancelarActionPerformed
