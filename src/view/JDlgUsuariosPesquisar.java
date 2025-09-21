@@ -4,12 +4,6 @@
  */
 package view;
 
-import java.util.List;
-
-/**
- *
- * @author bruno
- */
 public class JDlgUsuariosPesquisar extends javax.swing.JDialog {
 
     JDlgUsuarios jDlgUsuarios;
@@ -21,7 +15,7 @@ public class JDlgUsuariosPesquisar extends javax.swing.JDialog {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(null);
-        setTitle("TABELA DE PESQUISA DE USUÁRIOS");
+        setTitle("Tabela de Pesquisa de Usuários");
     }
 
 //    public void setJDlgUsuarios(JDlgUsuarios jDlgUsuarios){
