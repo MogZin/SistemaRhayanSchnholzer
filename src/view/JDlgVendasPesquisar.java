@@ -4,12 +4,6 @@
  */
 package view;
 
-import java.util.List;
-
-/**
- *
- * @author bruno
- */
 public class JDlgVendasPesquisar extends javax.swing.JDialog {
 
     JDlgVendas jDlgVendas;
@@ -21,7 +15,7 @@ public class JDlgVendasPesquisar extends javax.swing.JDialog {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(null);
-        setTitle("TABELA DE PESQUISA DE VENDAS");
+        setTitle("Tabela de Pesquisa Vendas");
     }
 
     public void setTelaPai(JDlgVendas jDlgVendas) {
