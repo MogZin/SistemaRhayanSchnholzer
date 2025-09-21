@@ -7,6 +7,10 @@ package view;
 import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.io.File;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
@@ -23,6 +27,18 @@ public class JFrmPrincipal extends javax.swing.JFrame {
         initComponents();
         setTitle("Sistema de Vendas de Jogos");
         setExtendedState(MAXIMIZED_BOTH);
+
+        try {
+            //Essa parte abaixo carrega o arquivo de áudio (Só aceita formato .WAV professor)
+            File arquivoMusica = new File("src/musica/Elton-John-I_m-Still-Standing.wav");
+            AudioInputStream audioStream = AudioSystem.getAudioInputStream(arquivoMusica);
+            Clip clip = AudioSystem.getClip();
+            clip.open(audioStream);
+            //clip.start(); // toca uma vez só 
+            clip.loop(Clip.LOOP_CONTINUOUSLY); // toca em loop infinito
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         int largura = screenSize.width;

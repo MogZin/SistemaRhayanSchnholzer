@@ -51,8 +51,8 @@ public class Util {
         int opcao = JOptionPane.showConfirmDialog(
                 null,
                 cad,
-                "EXCLUIR",
-                JOptionPane.YES_NO_OPTION, // só mostra "Sim" e "Não"
+                "EXCLUSÃO",
+                JOptionPane.YES_NO_OPTION,
                 JOptionPane.QUESTION_MESSAGE
         );
 
@@ -76,14 +76,14 @@ public class Util {
         return String.valueOf(num);
     }
 
-    public static Date strToDate(String data) throws Exception {
-        return new SimpleDateFormat("dd/MM/yyyy").parse(data);
-
+    public static Date strToDate(String data) throws ParseException {
+        SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
+        return formato.parse(data);
     }
 
     public static String dateToStr(Date data) {
-        return new SimpleDateFormat("dd/MM/yyyy").format(data);
-
+        SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
+        return formato.format(data);
     }
 
 }

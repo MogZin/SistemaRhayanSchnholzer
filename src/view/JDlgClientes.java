@@ -18,15 +18,9 @@ import javax.swing.text.DefaultFormatterFactory;
 import javax.swing.text.MaskFormatter;
 import tools.Util;
 
-/**
- *
- * @author bruno
- */
+
 public class JDlgClientes extends javax.swing.JDialog {
 
-    /**
-     * Creates new form jDlgClientes
-     */
     boolean incluir = false;
     private MaskFormatter mascaraCpf, mascaraTel, mascaraCep, mascaraDataNasc, mascaraDataCad;
 
@@ -127,6 +121,7 @@ public class JDlgClientes extends javax.swing.JDialog {
         jCboEstado = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
         jBtnCancelar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/cancelar.png"))); // NOI18N
         jBtnCancelar.setText("Cancelar");
@@ -437,6 +432,7 @@ public class JDlgClientes extends javax.swing.JDialog {
         Util.limpar(jTxtCodigo, jTxtNome, jTxtBairro, jTxtCidade, jFmtCpf, jFmtDataNascimento, jFmtCep, jFmtDataCadastro, jFmtEmail, jFmtSaldoConta, jFmtTelefone, jCboEstado, jCboGenero, jCboTipoCliente, jChbAtivo, jPwdSenha);
         Util.habilitar(false, jBtnIncluir, jBtnExcluir, jBtnAlterar, jBtnPesquisar);
         jTxtCodigo.grabFocus();
+        incluir = true;
     }//GEN-LAST:event_jBtnIncluirActionPerformed
 
     private void jTxtCodigoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTxtCodigoActionPerformed
@@ -471,6 +467,17 @@ public class JDlgClientes extends javax.swing.JDialog {
         Util.habilitar(false, jBtnConfirmar, jBtnCancelar, jTxtCodigo, jTxtNome, jTxtBairro, jTxtCidade, jFmtCpf, jFmtDataNascimento, jFmtCep, jFmtDataCadastro, jFmtEmail, jFmtSaldoConta, jFmtTelefone, jCboEstado, jCboGenero, jCboTipoCliente, jChbAtivo, jPwdSenha);
         Util.habilitar(true, jBtnIncluir, jBtnExcluir, jBtnAlterar, jBtnPesquisar);
         Util.limpar(jTxtCodigo, jTxtNome, jTxtBairro, jTxtCidade, jFmtCpf, jFmtDataNascimento, jFmtCep, jFmtDataCadastro, jFmtEmail, jFmtSaldoConta, jFmtTelefone, jCboEstado, jCboGenero, jCboTipoCliente, jChbAtivo, jPwdSenha);
+        Util.strToInt(jTxtCodigo.getText());
+        try {
+            Util.strToDate(jFmtDataCadastro.getText());
+        } catch (ParseException ex) {
+            Logger.getLogger(JDlgClientes.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        try {
+            Util.strToDate(jFmtDataNascimento.getText());
+        } catch (ParseException ex) {
+            Logger.getLogger(JDlgClientes.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_jBtnConfirmarActionPerformed
 
     private void jBtnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnCancelarActionPerformed
@@ -484,6 +491,7 @@ public class JDlgClientes extends javax.swing.JDialog {
         Util.habilitar(false, jBtnIncluir, jBtnExcluir, jBtnAlterar, jBtnPesquisar);
         Util.habilitar(false, jTxtCodigo);
         jTxtNome.grabFocus();
+        incluir = false;
     }//GEN-LAST:event_jBtnAlterarActionPerformed
 
     private void jFmtEmailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jFmtEmailActionPerformed
@@ -494,6 +502,18 @@ public class JDlgClientes extends javax.swing.JDialog {
         if (Util.pergunta("Deseja excluir?")) {
 
         }
+        Util.strToInt(jTxtCodigo.getText());
+        try {
+            Util.strToDate(jFmtDataCadastro.getText());
+        } catch (ParseException ex) {
+            Logger.getLogger(JDlgClientes.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        try {
+            Util.strToDate(jFmtDataNascimento.getText());
+        } catch (ParseException ex) {
+            Logger.getLogger(JDlgClientes.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        Util.limpar(jTxtCodigo, jTxtNome, jTxtBairro, jTxtCidade, jFmtCpf, jFmtDataNascimento, jFmtCep, jFmtDataCadastro, jFmtEmail, jFmtSaldoConta, jFmtTelefone, jCboEstado, jCboGenero, jCboTipoCliente, jChbAtivo, jPwdSenha);
     }//GEN-LAST:event_jBtnExcluirActionPerformed
 
     private void jBtnPesquisarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnPesquisarActionPerformed
