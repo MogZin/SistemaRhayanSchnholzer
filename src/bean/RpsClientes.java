@@ -39,7 +39,7 @@ public class RpsClientes implements java.io.Serializable {
     private int rpsTipoCliente;
     private double rpsSaldoConta;
     private int rpsEstado;
-    private Character rpsAtivo;
+    private String rpsAtivo;
 
     public RpsClientes() {
     }
@@ -53,7 +53,7 @@ public class RpsClientes implements java.io.Serializable {
         this.rpsDataCadastro = rpsDataCadastro;
     }
 
-    public RpsClientes(String rpsNome, String rpsCpf, String rpsTelefone, Date rpsDataNascimento, String rpsBairro, String rpsCidade, String rpsCep, String rpsSenha, String rpsEmail, Date rpsDataCadastro, int rpsGenero, int rpsTipoCliente, double rpsSaldoConta, int rpsEstado, Character rpsAtivo) {
+    public RpsClientes(String rpsNome, String rpsCpf, String rpsTelefone, Date rpsDataNascimento, String rpsBairro, String rpsCidade, String rpsCep, String rpsSenha, String rpsEmail, Date rpsDataCadastro, int rpsGenero, int rpsTipoCliente, double rpsSaldoConta, int rpsEstado, String rpsAtivo) {
         this.rpsNome = rpsNome;
         this.rpsCpf = rpsCpf;
         this.rpsTelefone = rpsTelefone;
@@ -212,11 +212,11 @@ public class RpsClientes implements java.io.Serializable {
     }
 
     @Column(name = "rps_ativo", length = 1)
-    public Character getRpsAtivo() {
+    public String getRpsAtivo() {
         return this.rpsAtivo;
     }
 
-    public void setRpsAtivo(Character rpsAtivo) {
+    public void setRpsAtivo(String rpsAtivo) {
         this.rpsAtivo = rpsAtivo;
     }
 }

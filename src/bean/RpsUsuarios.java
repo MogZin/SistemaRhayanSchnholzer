@@ -29,7 +29,7 @@ public class RpsUsuarios implements java.io.Serializable {
     private Date rpsDataNascimento;
     private String rpsSenha;
     private int rpsNivel;
-    private Character rpsAtivo;
+    private String rpsAtivo;
 
     public RpsUsuarios() {
     }
@@ -41,7 +41,7 @@ public class RpsUsuarios implements java.io.Serializable {
         this.rpsSenha = rpsSenha;
     }
 
-    public RpsUsuarios(String rpsNome, String rpsApelido, String rpsCpf, Date rpsDataNascimento, String rpsSenha, int rpsNivel, Character rpsAtivo) {
+    public RpsUsuarios(String rpsNome, String rpsApelido, String rpsCpf, Date rpsDataNascimento, String rpsSenha, int rpsNivel, String rpsAtivo) {
         this.rpsNome = rpsNome;
         this.rpsApelido = rpsApelido;
         this.rpsCpf = rpsCpf;
@@ -119,11 +119,11 @@ public class RpsUsuarios implements java.io.Serializable {
     }
 
     @Column(name = "rps_ativo", length = 1)
-    public Character getRpsAtivo() {
+    public String getRpsAtivo() {
         return this.rpsAtivo;
     }
 
-    public void setRpsAtivo(Character rpsAtivo) {
+    public void setRpsAtivo(String rpsAtivo) {
         this.rpsAtivo = rpsAtivo;
     }
 }

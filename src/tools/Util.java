@@ -68,8 +68,23 @@ public class Util {
 
     }
 
-    public static Double strToDouble(String num) {
-        return Double.parseDouble(num);
+    public static double strToDouble(String valor) {
+        if (valor == null || valor.trim().isEmpty()) {
+            return 0.0;
+        }
+
+        // Remove R$, espaços, pontos e substitui vírgula por ponto
+        valor = valor.replace("R$", "")
+                .replace(" ", "")
+                .replace(".", "")
+                .replace(",", ".");
+
+        try {
+            return Double.parseDouble(valor);
+        } catch (NumberFormatException e) {
+            System.err.println("Erro ao converter valor para double: " + valor);
+            return 0.0;
+        }
     }
 
     public static String doubleToStr(double num) {

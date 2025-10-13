@@ -4,6 +4,7 @@
  */
 package view;
 
+import bean.RpsUsuarios;
 import java.awt.Color;
 import java.awt.Image;
 import javax.swing.ImageIcon;
@@ -14,10 +15,11 @@ import java.util.logging.Logger;
 import javax.swing.text.DefaultFormatterFactory;
 import javax.swing.text.MaskFormatter;
 import tools.Util;
+import dao.UsuariosDAO;
 
 public class JDlgUsuarios extends javax.swing.JDialog {
 
-    boolean incluir = false;
+    private boolean incluir;
     private MaskFormatter mascaraCpf, mascaraDataNasc;
 
     public JDlgUsuarios(java.awt.Frame parent, boolean modal) {
@@ -51,6 +53,43 @@ public class JDlgUsuarios extends javax.swing.JDialog {
         } catch (ParseException ex) {
             Logger.getLogger(JDlgUsuarios.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    public void beanView(RpsUsuarios usuarios) {
+        jTxtCodigo.setText(Util.intToStr(usuarios.getRpsIdusuarios()));
+        jTxtNome.setText(usuarios.getRpsNome());
+        jTxtApelido.setText(usuarios.getRpsApelido());
+        jFmtCpf.setText(usuarios.getRpsCpf());
+        jFmtDataNascimento.setText(Util.dateToStr(usuarios.getRpsDataNascimento()));
+        jPwdSenha.setText(usuarios.getRpsSenha());
+        jCboNivel.setSelectedIndex(usuarios.getRpsNivel());
+        if (usuarios.getRpsAtivo().equals("S") == true) {
+            jChbAtivo.setSelected(true);
+        } else {
+            jChbAtivo.setSelected(false);
+        }
+    }
+
+    public RpsUsuarios viewBean() {
+        RpsUsuarios Rpsusuarios = new RpsUsuarios();
+        int cod = Util.strToInt(jTxtCodigo.getText());
+        Rpsusuarios.setRpsIdusuarios(cod);
+        Rpsusuarios.setRpsNome(jTxtNome.getText());
+        Rpsusuarios.setRpsApelido(jTxtApelido.getText());
+        Rpsusuarios.setRpsCpf(jFmtCpf.getText());
+        try {
+            Rpsusuarios.setRpsDataNascimento(Util.strToDate(jFmtDataNascimento.getText()));
+        } catch (ParseException ex) {
+            Logger.getLogger(JDlgUsuarios.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        Rpsusuarios.setRpsSenha(jPwdSenha.getText());
+        Rpsusuarios.setRpsNivel(jCboNivel.getSelectedIndex());
+        if (jChbAtivo.isSelected() == true) {
+            Rpsusuarios.setRpsAtivo("S");
+        } else {
+            Rpsusuarios.setRpsAtivo("N");
+        }
+        return Rpsusuarios;
     }
 
     /**
@@ -300,6 +339,10 @@ public class JDlgUsuarios extends javax.swing.JDialog {
     }//GEN-LAST:event_jTxtApelidoActionPerformed
 
     private void jBtnAlterarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnAlterarActionPerformed
+        if (jTxtCodigo.getText().trim().isEmpty()) {
+            Util.mensagem("Pesquise um usuário antes de Alterar");
+            return;
+        }
         Util.habilitar(true, jBtnConfirmar, jBtnCancelar, jTxtCodigo, jTxtNome, jTxtApelido, jFmtCpf, jFmtDataNascimento, jCboNivel, jChbAtivo, jPwdSenha);
         Util.habilitar(false, jBtnIncluir, jBtnExcluir, jBtnAlterar, jBtnPesquisar);
         Util.habilitar(false, jTxtCodigo);
@@ -308,14 +351,15 @@ public class JDlgUsuarios extends javax.swing.JDialog {
     }//GEN-LAST:event_jBtnAlterarActionPerformed
 
     private void jBtnExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnExcluirActionPerformed
-        if (Util.pergunta("Deseja excluir?")) {
-
+        if (jTxtCodigo.getText().trim().isEmpty()) {
+            Util.mensagem("Pesquise um usuário antes de Excluir");
+            return;
         }
-        Util.strToInt(jTxtCodigo.getText());
-        try {
-            Util.strToDate(jFmtDataNascimento.getText());
-        } catch (ParseException ex) {
-            Logger.getLogger(JDlgUsuarios.class.getName()).log(Level.SEVERE, null, ex);
+
+        if (Util.pergunta("Deseja excluir ?") == true) {
+            UsuariosDAO usuariosDAO = new UsuariosDAO();
+            RpsUsuarios rpsUsuarios = viewBean();
+            usuariosDAO.delete(rpsUsuarios);
         }
         Util.limpar(jTxtCodigo, jTxtNome, jTxtApelido, jFmtCpf, jFmtDataNascimento, jCboNivel, jChbAtivo, jPwdSenha);
     }//GEN-LAST:event_jBtnExcluirActionPerformed
@@ -340,7 +384,7 @@ public class JDlgUsuarios extends javax.swing.JDialog {
 
     private void jBtnPesquisarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnPesquisarActionPerformed
         JDlgUsuariosPesquisar jDlgUsuariosPesquisar = new JDlgUsuariosPesquisar(null, true);
-        jDlgUsuariosPesquisar.setTelaPai(this);
+        jDlgUsuariosPesquisar.setTelaAnterior(this);
         jDlgUsuariosPesquisar.setVisible(true);
     }//GEN-LAST:event_jBtnPesquisarActionPerformed
 
@@ -353,15 +397,17 @@ public class JDlgUsuarios extends javax.swing.JDialog {
     }//GEN-LAST:event_jBtnIncluirActionPerformed
 
     private void jBtnConfirmarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnConfirmarActionPerformed
+        UsuariosDAO usuariosDAO = new UsuariosDAO();
+        RpsUsuarios Rpsusuarios = viewBean();
+        if (incluir == true) {
+            usuariosDAO.insert(Rpsusuarios);
+
+        } else {
+            usuariosDAO.update(Rpsusuarios);
+        }
         Util.habilitar(false, jBtnConfirmar, jBtnCancelar, jTxtCodigo, jTxtNome, jTxtApelido, jFmtCpf, jFmtDataNascimento, jCboNivel, jChbAtivo, jPwdSenha);
         Util.habilitar(true, jBtnIncluir, jBtnExcluir, jBtnAlterar, jBtnPesquisar);
         Util.limpar(jTxtCodigo, jTxtNome, jTxtApelido, jFmtCpf, jFmtDataNascimento, jCboNivel, jChbAtivo, jPwdSenha);
-        Util.strToInt(jTxtCodigo.getText());
-        try {
-            Util.strToDate(jFmtDataNascimento.getText());
-        } catch (ParseException ex) {
-            Logger.getLogger(JDlgUsuarios.class.getName()).log(Level.SEVERE, null, ex);
-        }
     }//GEN-LAST:event_jBtnConfirmarActionPerformed
 
     /**

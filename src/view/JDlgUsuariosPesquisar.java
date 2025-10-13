@@ -4,22 +4,29 @@
  */
 package view;
 
+import bean.RpsUsuarios;
+import dao.UsuariosDAO;
+import java.util.List;
+import view.JDlgUsuarios;
+
 public class JDlgUsuariosPesquisar extends javax.swing.JDialog {
 
-    JDlgUsuarios jDlgUsuarios;
+    private JDlgUsuarios jDlgUsuarios;
+    ControllerUsuarios controllerUsuarios;
 
-    /**
-     * Creates new form JDlgUsuariosPesquisar
-     */
     public JDlgUsuariosPesquisar(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(null);
-        setTitle("Tabela de Pesquisa de Usuários");
+        setTitle("Pesquisar Usuários");
+        controllerUsuarios = new ControllerUsuarios();
+        UsuariosDAO usuariosDAO = new UsuariosDAO();
+        List lista = (List) usuariosDAO.listAll();
+        controllerUsuarios.setList(lista);
+        jTable1.setModel(controllerUsuarios);
     }
 
-//    public void setJDlgUsuarios(JDlgUsuarios jDlgUsuarios){
-    public void setTelaPai(JDlgUsuarios jDlgUsuarios) {
+    public void setTelaAnterior(JDlgUsuarios jDlgUsuarios) {
         this.jDlgUsuarios = jDlgUsuarios;
     }
 
@@ -85,8 +92,9 @@ public class JDlgUsuariosPesquisar extends javax.swing.JDialog {
 
     private void jBtnOkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnOkActionPerformed
         // TODO add your handling code here:
-        int linSel = jTable1.getSelectedRow();
-        setVisible(false);
+        RpsUsuarios usuarios = controllerUsuarios.getBean(jTable1.getSelectedRow());
+        jDlgUsuarios.beanView(usuarios);
+        this.setVisible(false);
     }//GEN-LAST:event_jBtnOkActionPerformed
 
     /**

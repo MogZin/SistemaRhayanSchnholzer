@@ -4,6 +4,7 @@
  */
 package view;
 
+import bean.RpsClientes;
 import java.awt.Color;
 import java.awt.Image;
 import javax.swing.ImageIcon;
@@ -14,17 +15,16 @@ import java.util.logging.Logger;
 import javax.swing.text.DefaultFormatterFactory;
 import javax.swing.text.MaskFormatter;
 import tools.Util;
-
+import dao.ClientesDAO;
 
 public class JDlgClientes extends javax.swing.JDialog {
 
-    boolean incluir = false;
+    private boolean incluir;
     private MaskFormatter mascaraCpf, mascaraTel, mascaraCep, mascaraDataNasc, mascaraDataCad;
 
     public JDlgClientes(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
-        setTitle("Cadastro de Clientes");
         setLocationRelativeTo(null);
         jLabel1.setForeground(Color.BLACK);
         jLabel2.setForeground(Color.BLACK);
@@ -68,6 +68,124 @@ public class JDlgClientes extends javax.swing.JDialog {
         } catch (ParseException ex) {
             Logger.getLogger(JDlgClientes.class.getName()).log(Level.SEVERE, null, ex);
         }
+        // === FORMATAÇÃO AUTOMÁTICA DE SALDO COM R$ ===
+        jFmtSaldoConta.addKeyListener(new java.awt.event.KeyAdapter() {
+            @Override
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                // Remove tudo que não for número
+                String texto = jFmtSaldoConta.getText().replaceAll("[^0-9]", "");
+
+                if (texto.isEmpty()) {
+                    jFmtSaldoConta.setText("R$ 0,00");
+                    return;
+                }
+
+                // Garante pelo menos 3 dígitos (para manter 2 casas decimais)
+                while (texto.length() < 3) {
+                    texto = "0" + texto;
+                }
+
+                try {
+                    double valor = Double.parseDouble(texto) / 100.0;
+                    java.text.DecimalFormat df = new java.text.DecimalFormat("#,##0.00");
+                    jFmtSaldoConta.setText("R$ " + df.format(valor));
+                } catch (NumberFormatException e) {
+                    // em caso de erro de conversão, reseta o campo
+                    jFmtSaldoConta.setText("R$ 0,00");
+                }
+            }
+
+            @Override
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                // bloqueia qualquer caractere que não seja número
+                char c = evt.getKeyChar();
+                if (!Character.isDigit(c)) {
+                    evt.consume();
+                }
+            }
+        });
+
+        // inicializa o campo bonitinho
+        jFmtSaldoConta.setText("R$ 0,00");
+        jFmtSaldoConta.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        jFmtSaldoConta.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 14));
+        jFmtSaldoConta.setForeground(new java.awt.Color(34, 139, 34)); // verde "saldo positivo"
+
+        iniciarRelogio("Cadastro de Clientes"); // coloque o nome do usuário logado aqui
+    }
+
+    private void iniciarRelogio(String nomeUsuario) {
+        javax.swing.Timer timer = new javax.swing.Timer(1000, e -> {
+            java.text.SimpleDateFormat sdfHora = new java.text.SimpleDateFormat("HH:mm:ss");
+            java.text.SimpleDateFormat sdfData = new java.text.SimpleDateFormat("EEEE, dd 'de' MMMM 'de' yyyy");
+
+            String hora = sdfHora.format(new java.util.Date());
+            String data = sdfData.format(new java.util.Date());
+
+            // Capitaliza o dia da semana
+            data = data.substring(0, 1).toUpperCase() + data.substring(1);
+
+            // Define título com usuário, data e hora
+            setTitle(nomeUsuario + " | " + data + " | " + hora);
+        });
+        timer.start();
+    }
+
+    public void beanView(RpsClientes clientes) {
+        jTxtCodigo.setText(Util.intToStr(clientes.getRpsIdclientes()));
+        jTxtNome.setText(clientes.getRpsNome());
+        jTxtBairro.setText(clientes.getRpsBairro());
+        jTxtCidade.setText(clientes.getRpsCidade());
+        jFmtCpf.setText(clientes.getRpsCpf());
+        jFmtCep.setText(clientes.getRpsCep());
+        jFmtEmail.setText(clientes.getRpsEmail());
+        jFmtSaldoConta.setText(Util.doubleToStr(clientes.getRpsSaldoConta()));
+        jFmtTelefone.setText(clientes.getRpsTelefone());
+        jFmtEmail.setText(clientes.getRpsEmail());
+        jFmtDataCadastro.setText(Util.dateToStr(clientes.getRpsDataCadastro()));
+        jFmtDataNascimento.setText(Util.dateToStr(clientes.getRpsDataNascimento()));
+        jPwdSenha.setText(clientes.getRpsSenha());
+        jCboEstado.setSelectedIndex(clientes.getRpsEstado());
+        jCboGenero.setSelectedIndex(clientes.getRpsGenero());
+        jCboTipoCliente.setSelectedIndex(clientes.getRpsTipoCliente());
+        if (clientes.getRpsAtivo().equals("S") == true) {
+            jChbAtivo.setSelected(true);
+        } else {
+            jChbAtivo.setSelected(false);
+        }
+    }
+
+    public RpsClientes viewBean() {
+        RpsClientes Rpsclientes = new RpsClientes();
+        int cod = Util.strToInt(jTxtCodigo.getText());
+        Rpsclientes.setRpsIdclientes(cod);
+        Rpsclientes.setRpsNome(jTxtNome.getText());
+        Rpsclientes.setRpsBairro(jTxtBairro.getText());
+        Rpsclientes.setRpsCidade(jTxtCidade.getText());
+        Rpsclientes.setRpsCpf(jFmtCpf.getText());
+        Rpsclientes.setRpsCep(jFmtCep.getText());
+        Rpsclientes.setRpsEmail(jFmtEmail.getText());
+        Rpsclientes.setRpsSaldoConta(Util.strToDouble(jFmtSaldoConta.getText()));
+        Rpsclientes.setRpsTelefone(jFmtTelefone.getText());
+
+        try {
+            Rpsclientes.setRpsDataCadastro(Util.strToDate(jFmtDataCadastro.getText()));
+            Rpsclientes.setRpsDataNascimento(Util.strToDate(jFmtDataNascimento.getText()));
+        } catch (ParseException ex) {
+            Logger.getLogger(JDlgClientes.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        Rpsclientes.setRpsSenha(jPwdSenha.getText());
+        Rpsclientes.setRpsEstado(jCboEstado.getSelectedIndex());
+        Rpsclientes.setRpsGenero(jCboGenero.getSelectedIndex());
+        Rpsclientes.setRpsTipoCliente(jCboTipoCliente.getSelectedIndex());
+
+        if (jChbAtivo.isSelected() == true) {
+            Rpsclientes.setRpsAtivo("S");
+        } else {
+            Rpsclientes.setRpsAtivo("N");
+        }
+        return Rpsclientes;
     }
 
     /**
@@ -461,20 +579,18 @@ public class JDlgClientes extends javax.swing.JDialog {
     }//GEN-LAST:event_jFmtDataCadastroActionPerformed
 
     private void jBtnConfirmarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnConfirmarActionPerformed
+        ClientesDAO usuariosDAO = new ClientesDAO();
+        RpsClientes rpsClientes = viewBean();
+        if (incluir == true) {
+            usuariosDAO.insert(rpsClientes);
+
+        } else {
+            usuariosDAO.update(rpsClientes);
+        }
         Util.habilitar(false, jBtnConfirmar, jBtnCancelar, jTxtCodigo, jTxtNome, jTxtBairro, jTxtCidade, jFmtCpf, jFmtDataNascimento, jFmtCep, jFmtDataCadastro, jFmtEmail, jFmtSaldoConta, jFmtTelefone, jCboEstado, jCboGenero, jCboTipoCliente, jChbAtivo, jPwdSenha);
         Util.habilitar(true, jBtnIncluir, jBtnExcluir, jBtnAlterar, jBtnPesquisar);
         Util.limpar(jTxtCodigo, jTxtNome, jTxtBairro, jTxtCidade, jFmtCpf, jFmtDataNascimento, jFmtCep, jFmtDataCadastro, jFmtEmail, jFmtSaldoConta, jFmtTelefone, jCboEstado, jCboGenero, jCboTipoCliente, jChbAtivo, jPwdSenha);
         Util.strToInt(jTxtCodigo.getText());
-        try {
-            Util.strToDate(jFmtDataCadastro.getText());
-        } catch (ParseException ex) {
-            Logger.getLogger(JDlgClientes.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        try {
-            Util.strToDate(jFmtDataNascimento.getText());
-        } catch (ParseException ex) {
-            Logger.getLogger(JDlgClientes.class.getName()).log(Level.SEVERE, null, ex);
-        }
     }//GEN-LAST:event_jBtnConfirmarActionPerformed
 
     private void jBtnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnCancelarActionPerformed
@@ -484,6 +600,10 @@ public class JDlgClientes extends javax.swing.JDialog {
     }//GEN-LAST:event_jBtnCancelarActionPerformed
 
     private void jBtnAlterarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnAlterarActionPerformed
+        if (jTxtCodigo.getText().trim().isEmpty()) {
+            Util.mensagem("Pesquise um cliente antes de Alterar");
+            return;
+        }
         Util.habilitar(true, jBtnConfirmar, jBtnCancelar, jTxtCodigo, jTxtNome, jTxtBairro, jTxtCidade, jFmtCpf, jFmtDataNascimento, jFmtCep, jFmtDataCadastro, jFmtEmail, jFmtSaldoConta, jFmtTelefone, jCboEstado, jCboGenero, jCboTipoCliente, jChbAtivo, jPwdSenha);
         Util.habilitar(false, jBtnIncluir, jBtnExcluir, jBtnAlterar, jBtnPesquisar);
         Util.habilitar(false, jTxtCodigo);
@@ -496,26 +616,22 @@ public class JDlgClientes extends javax.swing.JDialog {
     }//GEN-LAST:event_jFmtEmailActionPerformed
 
     private void jBtnExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnExcluirActionPerformed
-        if (Util.pergunta("Deseja excluir?")) {
+        if (jTxtCodigo.getText().trim().isEmpty()) {
+            Util.mensagem("Pesquise um cliente antes de Excluir");
+            return;
+        }
 
-        }
-        Util.strToInt(jTxtCodigo.getText());
-        try {
-            Util.strToDate(jFmtDataCadastro.getText());
-        } catch (ParseException ex) {
-            Logger.getLogger(JDlgClientes.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        try {
-            Util.strToDate(jFmtDataNascimento.getText());
-        } catch (ParseException ex) {
-            Logger.getLogger(JDlgClientes.class.getName()).log(Level.SEVERE, null, ex);
+        if (Util.pergunta("Deseja excluir ?") == true) {
+            ClientesDAO clientesDAO = new ClientesDAO();
+            RpsClientes ppsClientes = viewBean();
+            clientesDAO.delete(ppsClientes);
         }
         Util.limpar(jTxtCodigo, jTxtNome, jTxtBairro, jTxtCidade, jFmtCpf, jFmtDataNascimento, jFmtCep, jFmtDataCadastro, jFmtEmail, jFmtSaldoConta, jFmtTelefone, jCboEstado, jCboGenero, jCboTipoCliente, jChbAtivo, jPwdSenha);
     }//GEN-LAST:event_jBtnExcluirActionPerformed
 
     private void jBtnPesquisarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnPesquisarActionPerformed
         JDlgClientesPesquisar jDlgClientesPesquisar = new JDlgClientesPesquisar(null, true);
-        jDlgClientesPesquisar.setTelaPai(this);
+        jDlgClientesPesquisar.setTelaAnterior(this);
         jDlgClientesPesquisar.setVisible(true);
     }//GEN-LAST:event_jBtnPesquisarActionPerformed
 
