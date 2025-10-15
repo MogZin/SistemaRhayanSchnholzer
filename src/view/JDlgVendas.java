@@ -4,6 +4,7 @@
  */
 package view;
 
+import bean.RpsVendas;
 import java.awt.Color;
 import java.awt.Image;
 import javax.swing.ImageIcon;
@@ -14,10 +15,11 @@ import java.util.logging.Logger;
 import javax.swing.text.DefaultFormatterFactory;
 import javax.swing.text.MaskFormatter;
 import tools.Util;
+import dao.VendasDAO;
 
 public class JDlgVendas extends javax.swing.JDialog {
 
-    boolean incluir = false;
+    private boolean incluir;
     private MaskFormatter mascaraDataVenda;
 
     public JDlgVendas(java.awt.Frame parent, boolean modal) {
@@ -41,13 +43,103 @@ public class JDlgVendas extends javax.swing.JDialog {
         getContentPane().add(background);
         getContentPane().setComponentZOrder(background, getContentPane().getComponentCount() - 1);
 
-        Util.habilitar(false, jBtnConfirmar, jBtnCancelar, jTxtCodigo, jFmtDataVenda, jTxtCliente, jTxtDesconto, jTxtTotal, jTxtUsuario, jCboFormaPagamento);
+        Util.habilitar(false, jBtnConfirmar, jBtnCancelar, jTxtCodigo, jFmtDataVenda, jCboCliente, jTxtDesconto, jTxtTotal, jCboUsuario, jCboFormaPagamento);
         try {
             mascaraDataVenda = new MaskFormatter("##/##/####");
             jFmtDataVenda.setFormatterFactory(new DefaultFormatterFactory(mascaraDataVenda));
         } catch (ParseException ex) {
             Logger.getLogger(JDlgVendas.class.getName()).log(Level.SEVERE, null, ex);
         }
+
+        // === FORMATAÇÃO AUTOMÁTICA DE SALDO COM R$ ===
+        jTxtTotal.addKeyListener(new java.awt.event.KeyAdapter() {
+            @Override
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                // Remove tudo que não for número
+                String texto = jTxtTotal.getText().replaceAll("[^0-9]", "");
+
+                if (texto.isEmpty()) {
+                    jTxtTotal.setText("R$ 0,00");
+                    return;
+                }
+
+                // Garante pelo menos 3 dígitos (para manter 2 casas decimais)
+                while (texto.length() < 3) {
+                    texto = "0" + texto;
+                }
+
+                try {
+                    double valor = Double.parseDouble(texto) / 100.0;
+                    java.text.DecimalFormat df = new java.text.DecimalFormat("#,##0.00");
+                    jTxtTotal.setText("R$ " + df.format(valor));
+                } catch (NumberFormatException e) {
+                    // em caso de erro de conversão, reseta o campo
+                    jTxtTotal.setText("R$ 0,00");
+                }
+            }
+
+            @Override
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                // bloqueia qualquer caractere que não seja número
+                char c = evt.getKeyChar();
+                if (!Character.isDigit(c)) {
+                    evt.consume();
+                }
+            }
+        });
+
+        // inicializa o campo bonitinho
+        jTxtTotal.setText("R$ 0,00");
+        jTxtTotal.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        jTxtTotal.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 14));
+        jTxtTotal.setForeground(new java.awt.Color(34, 139, 34)); // verde "saldo positivo"
+
+        iniciarRelogio("Cadastro de Vendas"); // coloque o nome do usuário logado aqui
+    }
+
+    private void iniciarRelogio(String nomeUsuario) {
+        javax.swing.Timer timer = new javax.swing.Timer(1000, e -> {
+            java.text.SimpleDateFormat sdfHora = new java.text.SimpleDateFormat("HH:mm:ss");
+            java.text.SimpleDateFormat sdfData = new java.text.SimpleDateFormat("EEEE, dd 'de' MMMM 'de' yyyy");
+
+            String hora = sdfHora.format(new java.util.Date());
+            String data = sdfData.format(new java.util.Date());
+
+            // Capitaliza o dia da semana
+            data = data.substring(0, 1).toUpperCase() + data.substring(1);
+
+            // Define título com usuário, data e hora
+            setTitle(nomeUsuario + " | " + data + " | " + hora);
+        });
+        timer.start();
+    }
+
+    public void beanView(RpsVendas vendas) {
+        jTxtCodigo.setText(Util.intToStr(vendas.getRpsIdVendas()));
+        jCboCliente.setSelectedItem(vendas.getRpsClientes());
+        jCboUsuario.setSelectedItem(vendas.getRpsClientes());
+        jTxtDesconto.setText(Util.doubleToStr(vendas.getRpsDesconto()));
+        jTxtTotal.setText(Util.doubleToStr(vendas.getRpsTotal()));
+        jFmtDataVenda.setText(Util.dateToStr(vendas.getRpsDataVenda()));
+        jCboFormaPagamento.setSelectedIndex(Util.strToInt(vendas.getRpsFormaPagamento()));
+    }
+
+    public RpsVendas viewBean() {
+        RpsVendas Rpsvendas = new RpsVendas();
+        int cod = Util.strToInt(jTxtCodigo.getText());
+        Rpsvendas.setRpsIdVendas(cod);
+        Rpsvendas.setRpsDesconto(Util.strToDouble(jTxtDesconto.getText()));
+        Rpsvendas.setRpsTotal(Util.strToDouble(jTxtTotal.getText()));
+        try {
+            Rpsvendas.setRpsDataVenda(Util.strToDate(jFmtDataVenda.getText()));
+        } catch (ParseException ex) {
+            Logger.getLogger(JDlgVendas.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        Rpsvendas.setRpsClientes(jCboCliente.getSelectedIndex());
+        Rpsvendas.setRpsFormaPagamento(jCboFormaPagamento.getSelectedIndex());
+        Rpsvendas.setRpsUsuarios(jCboUsuario.getSelectedIndex());
+
+        return Rpsvendas;
     }
 
     /**
@@ -66,9 +158,7 @@ public class JDlgVendas extends javax.swing.JDialog {
         jLabel7 = new javax.swing.JLabel();
         jCboFormaPagamento = new javax.swing.JComboBox<>();
         jLabel3 = new javax.swing.JLabel();
-        jTxtCliente = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
-        jTxtUsuario = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
         jTxtTotal = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
@@ -84,6 +174,8 @@ public class JDlgVendas extends javax.swing.JDialog {
         jBtnIncluirProd = new javax.swing.JButton();
         jBtnAlterarProd = new javax.swing.JButton();
         jBtnExcluirProd = new javax.swing.JButton();
+        jCboCliente = new javax.swing.JComboBox<Cliente>();
+        jCboUsuario = new javax.swing.JComboBox<Usuario>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -217,20 +309,18 @@ public class JDlgVendas extends javax.swing.JDialog {
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(16, 16, 16)
                                 .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addGap(44, 44, 44)
+                                .addGap(18, 18, 18)
                                 .addComponent(jLabel3)
-                                .addGap(40, 40, 40))
+                                .addGap(42, 42, 42)
+                                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(layout.createSequentialGroup()
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jFmtDataVenda)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jTxtCliente)
-                                .addGap(8, 8, 8)))
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jTxtUsuario)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(8, 8, 8)
-                                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGap(18, 18, 18)
+                                .addComponent(jCboCliente, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jCboUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(32, 32, 32)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(layout.createSequentialGroup()
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -274,7 +364,6 @@ public class JDlgVendas extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel4)
                         .addComponent(jLabel5)
                         .addComponent(jLabel7)
                         .addComponent(jLabel6))
@@ -282,16 +371,17 @@ public class JDlgVendas extends javax.swing.JDialog {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel1)
                             .addComponent(jLabel2)
-                            .addComponent(jLabel3))
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel4))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jTxtCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jFmtDataVenda, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jCboFormaPagamento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jTxtCliente, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jTxtUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jTxtTotal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jTxtDesconto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(jTxtDesconto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jCboCliente, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jCboUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -436,7 +526,9 @@ public class JDlgVendas extends javax.swing.JDialog {
     private javax.swing.JButton jBtnIncluir;
     private javax.swing.JButton jBtnIncluirProd;
     private javax.swing.JButton jBtnPesquisar;
+    private javax.swing.JComboBox<Cliente> jCboCliente;
     private javax.swing.JComboBox<String> jCboFormaPagamento;
+    private javax.swing.JComboBox<Usuario> jCboUsuario;
     private javax.swing.JFormattedTextField jFmtDataVenda;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -447,10 +539,8 @@ public class JDlgVendas extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
-    private javax.swing.JTextField jTxtCliente;
     private javax.swing.JTextField jTxtCodigo;
     private javax.swing.JTextField jTxtDesconto;
     private javax.swing.JTextField jTxtTotal;
-    private javax.swing.JTextField jTxtUsuario;
     // End of variables declaration//GEN-END:variables
 }

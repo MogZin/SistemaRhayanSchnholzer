@@ -4,9 +4,15 @@
  */
 package view;
 
+import bean.RpsVendas;
+import dao.VendasDAO;
+import java.util.List;
+import view.JDlgVendas;
+
 public class JDlgVendasPesquisar extends javax.swing.JDialog {
 
-    JDlgVendas jDlgVendas;
+    private JDlgVendas jDlgVendas;
+    ControllerVendas controllerVendas;
 
     /**
      * Creates new form JDlgVendasPesquisar
@@ -16,9 +22,14 @@ public class JDlgVendasPesquisar extends javax.swing.JDialog {
         initComponents();
         setLocationRelativeTo(null);
         setTitle("Tabela de Pesquisa Vendas");
+        controllerVendas = new ControllerVendas();
+        VendasDAO vendasDAO = new VendasDAO();
+        List lista = (List) vendasDAO.listAll();
+        controllerVendas.setList(lista);
+        jTable1.setModel(controllerVendas);
     }
 
-    public void setTelaPai(JDlgVendas jDlgVendas) {
+    public void setTelaAnterior(JDlgVendas jDlgVendas) {
         this.jDlgVendas = jDlgVendas;
     }
 
@@ -82,8 +93,10 @@ public class JDlgVendasPesquisar extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jBtnOkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnOkActionPerformed
-        int linSel = jTable1.getSelectedRow();
-        setVisible(false);
+        // TODO add your handling code here:
+        RpsVendas vendas = controllerVendas.getBean(jTable1.getSelectedRow());
+        jDlgVendas.beanView(vendas);
+        this.setVisible(false);
 
     }//GEN-LAST:event_jBtnOkActionPerformed
 
