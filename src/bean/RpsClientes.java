@@ -218,4 +218,8 @@ public class RpsClientes implements java.io.Serializable {
     public void setRpsAtivo(String rpsAtivo) {
         this.rpsAtivo = rpsAtivo;
     }
+    @Override
+    public String toString() {
+        return this.rpsNome;
+    }
 }

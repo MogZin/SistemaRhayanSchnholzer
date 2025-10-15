@@ -17,8 +17,8 @@ import javax.persistence.UniqueConstraint;
  */
 @Entity
 @Table(name = "rps_usuarios",
-         catalog = "db_rhayan_schonholzer",
-         uniqueConstraints = @UniqueConstraint(columnNames = "rps_cpf")
+        catalog = "db_rhayan_schonholzer",
+        uniqueConstraints = @UniqueConstraint(columnNames = "rps_cpf")
 )
 public class RpsUsuarios implements java.io.Serializable {
 
@@ -124,5 +124,10 @@ public class RpsUsuarios implements java.io.Serializable {
 
     public void setRpsAtivo(String rpsAtivo) {
         this.rpsAtivo = rpsAtivo;
+    }
+
+    @Override
+    public String toString() {
+        return this.rpsNome;
     }
 }

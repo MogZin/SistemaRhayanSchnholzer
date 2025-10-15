@@ -28,7 +28,7 @@ public class RpsVendas implements java.io.Serializable {
     private RpsUsuarios rpsUsuarios;
     private Date rpsDataVenda;
     private double rpsTotal;
-    private String rpsFormaPagamento;
+    private int rpsFormaPagamento;
     private double rpsDesconto;
 
     public RpsVendas() {
@@ -38,7 +38,7 @@ public class RpsVendas implements java.io.Serializable {
         this.rpsDataVenda = rpsDataVenda;
     }
 
-    public RpsVendas(RpsClientes rpsClientes, RpsUsuarios rpsUsuarios, Date rpsDataVenda, double rpsTotal, String rpsFormaPagamento, double rpsDesconto) {
+    public RpsVendas(RpsClientes rpsClientes, RpsUsuarios rpsUsuarios, Date rpsDataVenda, double rpsTotal, int rpsFormaPagamento, double rpsDesconto) {
         this.rpsClientes = rpsClientes;
         this.rpsUsuarios = rpsUsuarios;
         this.rpsDataVenda = rpsDataVenda;
@@ -98,11 +98,11 @@ public class RpsVendas implements java.io.Serializable {
     }
 
     @Column(name = "rps_forma_pagamento", length = 50)
-    public String getRpsFormaPagamento() {
+    public int getRpsFormaPagamento() {
         return this.rpsFormaPagamento;
     }
 
-    public void setRpsFormaPagamento(String rpsFormaPagamento) {
+    public void setRpsFormaPagamento(int rpsFormaPagamento) {
         this.rpsFormaPagamento = rpsFormaPagamento;
     }
 
