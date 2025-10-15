@@ -4,18 +4,29 @@
  */
 package view;
 
+import bean.RpsVendedor;
+import dao.VendedorDAO;
+import java.util.List;
+import view.JDlgVendedor;
+
 public class JDlgVendedorPesquisar extends javax.swing.JDialog {
 
-    JDlgVendedor jDlgVendedor;
+    private JDlgVendedor jDlgVendedor;
+    ControllerVendedor controllerVendedor;
 
     public JDlgVendedorPesquisar(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
-        setTitle("Tabela de Pesquisa de Vendedores");
         setLocationRelativeTo(null);
+        setTitle("Pesquisar Vendedor");
+        controllerVendedor = new ControllerVendedor();
+        VendedorDAO vendedorDAO = new VendedorDAO();
+        List lista = (List) vendedorDAO.listAll();
+        controllerVendedor.setList(lista);
+        jTable1.setModel(controllerVendedor);
     }
 
-    public void setTelaPai(JDlgVendedor jDlgVendedor) {
+    public void setTelaAnterior(JDlgVendedor jDlgVendedor) {
         this.jDlgVendedor = jDlgVendedor;
     }
 
@@ -80,8 +91,9 @@ public class JDlgVendedorPesquisar extends javax.swing.JDialog {
 
     private void jBtnOkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnOkActionPerformed
         // TODO add your handling code here:
-        int linSel = jTable1.getSelectedRow();
-        setVisible(false);
+        RpsVendedor vendedor = controllerVendedor.getBean(jTable1.getSelectedRow());
+        jDlgVendedor.beanView(vendedor);
+        this.setVisible(false);
     }//GEN-LAST:event_jBtnOkActionPerformed
 
     /**

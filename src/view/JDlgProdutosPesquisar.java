@@ -4,18 +4,29 @@
  */
 package view;
 
+import bean.RpsProdutos;
+import dao.ProdutosDAO;
+import java.util.List;
+import view.JDlgUsuarios;
+
 public class JDlgProdutosPesquisar extends javax.swing.JDialog {
 
-    JDlgProdutos jDlgProdutos;
+    private JDlgProdutos jDlgProdutos;
+    ControllerProdutos controllerProdutos;
 
     public JDlgProdutosPesquisar(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(null);
-        setTitle("Tabela de Pesquisa de Produtos");
+        setTitle("Pesquisar Produtos");
+        controllerProdutos = new ControllerProdutos();
+        ProdutosDAO produtosDAO = new ProdutosDAO();
+        List lista = (List) produtosDAO.listAll();
+        controllerProdutos.setList(lista);
+        jTable1.setModel(controllerProdutos);
     }
 
-    public void setTelaPai(JDlgProdutos jDlgProdutos) {
+    public void setTelaAnterior(JDlgProdutos jDlgProdutos) {
         this.jDlgProdutos = jDlgProdutos;
     }
 
@@ -79,8 +90,10 @@ public class JDlgProdutosPesquisar extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jBtnOkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnOkActionPerformed
-        int linSel = jTable1.getSelectedRow();
-        setVisible(false);
+         // TODO add your handling code here:
+        RpsProdutos produtos = controllerProdutos.getBean(jTable1.getSelectedRow());
+        jDlgProdutos.beanView(produtos);
+        this.setVisible(false);
     }//GEN-LAST:event_jBtnOkActionPerformed
 
     /**

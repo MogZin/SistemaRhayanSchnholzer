@@ -141,7 +141,6 @@ public class JDlgClientes extends javax.swing.JDialog {
         jFmtEmail.setText(clientes.getRpsEmail());
         jFmtSaldoConta.setText(Util.doubleToStr(clientes.getRpsSaldoConta()));
         jFmtTelefone.setText(clientes.getRpsTelefone());
-        jFmtEmail.setText(clientes.getRpsEmail());
         jFmtDataCadastro.setText(Util.dateToStr(clientes.getRpsDataCadastro()));
         jFmtDataNascimento.setText(Util.dateToStr(clientes.getRpsDataNascimento()));
         jPwdSenha.setText(clientes.getRpsSenha());
@@ -579,18 +578,17 @@ public class JDlgClientes extends javax.swing.JDialog {
     }//GEN-LAST:event_jFmtDataCadastroActionPerformed
 
     private void jBtnConfirmarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnConfirmarActionPerformed
-        ClientesDAO usuariosDAO = new ClientesDAO();
+        ClientesDAO clientesDAO = new ClientesDAO();
         RpsClientes rpsClientes = viewBean();
         if (incluir == true) {
-            usuariosDAO.insert(rpsClientes);
+            clientesDAO.insert(rpsClientes);
 
         } else {
-            usuariosDAO.update(rpsClientes);
+            clientesDAO.update(rpsClientes);
         }
         Util.habilitar(false, jBtnConfirmar, jBtnCancelar, jTxtCodigo, jTxtNome, jTxtBairro, jTxtCidade, jFmtCpf, jFmtDataNascimento, jFmtCep, jFmtDataCadastro, jFmtEmail, jFmtSaldoConta, jFmtTelefone, jCboEstado, jCboGenero, jCboTipoCliente, jChbAtivo, jPwdSenha);
         Util.habilitar(true, jBtnIncluir, jBtnExcluir, jBtnAlterar, jBtnPesquisar);
         Util.limpar(jTxtCodigo, jTxtNome, jTxtBairro, jTxtCidade, jFmtCpf, jFmtDataNascimento, jFmtCep, jFmtDataCadastro, jFmtEmail, jFmtSaldoConta, jFmtTelefone, jCboEstado, jCboGenero, jCboTipoCliente, jChbAtivo, jPwdSenha);
-        Util.strToInt(jTxtCodigo.getText());
     }//GEN-LAST:event_jBtnConfirmarActionPerformed
 
     private void jBtnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnCancelarActionPerformed

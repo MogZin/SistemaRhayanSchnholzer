@@ -72,7 +72,6 @@ public class RpsClientes implements java.io.Serializable {
     }
 
     @Id
-    @GeneratedValue(strategy = IDENTITY)
 
     @Column(name = "rps_idclientes", unique = true, nullable = false)
     public int getRpsIdclientes() {

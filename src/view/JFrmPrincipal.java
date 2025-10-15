@@ -30,7 +30,7 @@ public class JFrmPrincipal extends javax.swing.JFrame {
 
         try {
             //Essa parte abaixo carrega o arquivo de áudio (Só aceita formato .WAV professor)
-            File arquivoMusica = new File("src/musica/Elton-John-I_m-Still-Standing.wav");
+            File arquivoMusica = new File("src/musica/musicainicial.wav");
             AudioInputStream audioStream = AudioSystem.getAudioInputStream(arquivoMusica);
             Clip clip = AudioSystem.getClip();
             clip.open(audioStream);
@@ -197,7 +197,6 @@ public class JFrmPrincipal extends javax.swing.JFrame {
         JDlgVendas jDlgVendas = new JDlgVendas(this, true);
         jDlgVendas.setVisible(true);
     }//GEN-LAST:event_jMnuVendasActionPerformed
-
     /**
      * @param args the command line arguments
      */

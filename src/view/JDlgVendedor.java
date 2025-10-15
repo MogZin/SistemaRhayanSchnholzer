@@ -4,6 +4,7 @@
  */
 package view;
 
+import bean.RpsVendedor;
 import java.awt.Color;
 import java.awt.Image;
 import javax.swing.ImageIcon;
@@ -14,16 +15,17 @@ import java.util.logging.Logger;
 import javax.swing.text.DefaultFormatterFactory;
 import javax.swing.text.MaskFormatter;
 import tools.Util;
+import dao.VendedorDAO;
 
 public class JDlgVendedor extends javax.swing.JDialog {
 
-    boolean incluir = false;
+    private boolean incluir;
     private MaskFormatter mascaraCpf, mascaraTel, mascaraDataContratacao;
 
     public JDlgVendedor(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
-        setTitle("Cadastro de Vendedores");
+
         setLocationRelativeTo(null);
         jLabel1.setForeground(Color.WHITE);
         jLabel2.setForeground(Color.WHITE);
@@ -52,6 +54,95 @@ public class JDlgVendedor extends javax.swing.JDialog {
         } catch (ParseException ex) {
             Logger.getLogger(JDlgVendedor.class.getName()).log(Level.SEVERE, null, ex);
         }
+
+        // === FORMATAÇÃO AUTOMÁTICA DE SALDO COM R$ ===
+        jTxtSalario.addKeyListener(new java.awt.event.KeyAdapter() {
+            @Override
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                // Remove tudo que não for número
+                String texto = jTxtSalario.getText().replaceAll("[^0-9]", "");
+
+                if (texto.isEmpty()) {
+                    jTxtSalario.setText("R$ 0,00");
+                    return;
+                }
+
+                // Garante pelo menos 3 dígitos (para manter 2 casas decimais)
+                while (texto.length() < 3) {
+                    texto = "0" + texto;
+                }
+
+                try {
+                    double valor = Double.parseDouble(texto) / 100.0;
+                    java.text.DecimalFormat df = new java.text.DecimalFormat("#,##0.00");
+                    jTxtSalario.setText("R$ " + df.format(valor));
+                } catch (NumberFormatException e) {
+                    // em caso de erro de conversão, reseta o campo
+                    jTxtSalario.setText("R$ 0,00");
+                }
+            }
+
+            @Override
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                // bloqueia qualquer caractere que não seja número
+                char c = evt.getKeyChar();
+                if (!Character.isDigit(c)) {
+                    evt.consume();
+                }
+            }
+        });
+
+        // inicializa o campo bonitinho
+        jTxtSalario.setText("R$ 0,00");
+        jTxtSalario.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        jTxtSalario.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 14));
+        jTxtSalario.setForeground(new java.awt.Color(34, 139, 34)); // verde "saldo positivo"
+
+        iniciarRelogio("Cadastro de Vendedores"); // coloque o nome do usuário logado aqui
+    }
+
+    public void beanView(RpsVendedor vendedor) {
+        jTxtCodigo.setText(Util.intToStr(vendedor.getRpsIdvendedor()));
+        jTxtNome.setText(vendedor.getRpsNome());
+        jTxtSalario.setText(Util.doubleToStr(vendedor.getRpsSalario()));
+        jFmtCpf.setText(vendedor.getRpsCpf());
+        jFmtEmail.setText(vendedor.getRpsEmail());
+        jFmtTelefone.setText(vendedor.getRpsTelefone());
+        jFmtDataContratacao.setText(Util.dateToStr(vendedor.getRpsDataContratacao()));
+    }
+
+    public RpsVendedor viewBean() {
+        RpsVendedor Rpsvendedor = new RpsVendedor();
+        int cod = Util.strToInt(jTxtCodigo.getText());
+        Rpsvendedor.setRpsIdvendedor(cod);
+        Rpsvendedor.setRpsNome(jTxtNome.getText());
+        Rpsvendedor.setRpsSalario(Util.strToDouble(jTxtSalario.getText()));
+        Rpsvendedor.setRpsCpf(jFmtCpf.getText());
+        Rpsvendedor.setRpsEmail(jFmtEmail.getText());
+        Rpsvendedor.setRpsTelefone(jFmtTelefone.getText());
+        try {
+            Rpsvendedor.setRpsDataContratacao(Util.strToDate(jFmtDataContratacao.getText()));
+        } catch (ParseException ex) {
+            Logger.getLogger(JDlgVendedor.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return Rpsvendedor;
+    }
+
+    private void iniciarRelogio(String nomeUsuario) {
+        javax.swing.Timer timer = new javax.swing.Timer(1000, e -> {
+            java.text.SimpleDateFormat sdfHora = new java.text.SimpleDateFormat("HH:mm:ss");
+            java.text.SimpleDateFormat sdfData = new java.text.SimpleDateFormat("EEEE, dd 'de' MMMM 'de' yyyy");
+
+            String hora = sdfHora.format(new java.util.Date());
+            String data = sdfData.format(new java.util.Date());
+
+            // Capitaliza o dia da semana
+            data = data.substring(0, 1).toUpperCase() + data.substring(1);
+
+            // Define título com usuário, data e hora
+            setTitle(nomeUsuario + " | " + data + " | " + hora);
+        });
+        timer.start();
     }
 
     /**
@@ -201,7 +292,7 @@ public class JDlgVendedor extends javax.swing.JDialog {
                                     .addComponent(jLabel6)
                                     .addComponent(jFmtDataContratacao, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(jTxtSalario, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                    .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)))
                             .addComponent(jFmtEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 405, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(0, 0, Short.MAX_VALUE))))
         );
@@ -263,6 +354,10 @@ public class JDlgVendedor extends javax.swing.JDialog {
     }//GEN-LAST:event_jBtnIncluirActionPerformed
 
     private void jBtnAlterarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnAlterarActionPerformed
+        if (jTxtCodigo.getText().trim().isEmpty()) {
+            Util.mensagem("Pesquise um vendedor antes de Alterar");
+            return;
+        }
         Util.habilitar(true, jBtnConfirmar, jBtnCancelar, jTxtNome, jTxtSalario, jFmtCpf, jFmtDataContratacao, jFmtEmail, jFmtTelefone);
         Util.habilitar(false, jBtnIncluir, jBtnExcluir, jBtnAlterar, jBtnPesquisar);
         Util.habilitar(false, jTxtCodigo);
@@ -271,29 +366,31 @@ public class JDlgVendedor extends javax.swing.JDialog {
     }//GEN-LAST:event_jBtnAlterarActionPerformed
 
     private void jBtnExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnExcluirActionPerformed
-        if (Util.pergunta("Deseja excluir?")) {
-
+        if (jTxtCodigo.getText().trim().isEmpty()) {
+            Util.mensagem("Pesquise um vendedor antes de Excluir");
+            return;
         }
-        Util.strToInt(jTxtCodigo.getText());
-        try {
-            Util.strToDate(jFmtDataContratacao.getText());
-        } catch (ParseException ex) {
-            Logger.getLogger(JDlgVendedor.class.getName()).log(Level.SEVERE, null, ex);
+
+        if (Util.pergunta("Deseja excluir ?") == true) {
+            VendedorDAO vendedorDAO = new VendedorDAO();
+            RpsVendedor rpsVendedor = viewBean();
+            vendedorDAO.delete(rpsVendedor);
         }
         Util.limpar(jTxtCodigo, jTxtNome, jTxtSalario, jFmtCpf, jFmtDataContratacao, jFmtEmail, jFmtTelefone);
     }//GEN-LAST:event_jBtnExcluirActionPerformed
 
     private void jBtnConfirmarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnConfirmarActionPerformed
+        VendedorDAO vendedorDAO = new VendedorDAO();
+        RpsVendedor rpsVendedor = viewBean();
+        if (incluir == true) {
+            vendedorDAO.insert(rpsVendedor);
+
+        } else {
+            vendedorDAO.update(rpsVendedor);
+        }
         Util.habilitar(false, jBtnConfirmar, jBtnCancelar, jTxtCodigo, jTxtNome, jTxtSalario, jFmtCpf, jFmtDataContratacao, jFmtEmail, jFmtTelefone);
         Util.habilitar(true, jBtnIncluir, jBtnExcluir, jBtnAlterar, jBtnPesquisar);
         Util.limpar(jTxtCodigo, jTxtNome, jTxtSalario, jFmtCpf, jFmtDataContratacao, jFmtEmail, jFmtTelefone);
-        Util.strToInt(jTxtCodigo.getText());
-        try {
-            Util.strToDate(jFmtDataContratacao.getText());
-        } catch (ParseException ex) {
-            Logger.getLogger(JDlgVendedor.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
     }//GEN-LAST:event_jBtnConfirmarActionPerformed
 
     private void jBtnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnCancelarActionPerformed
@@ -304,7 +401,7 @@ public class JDlgVendedor extends javax.swing.JDialog {
 
     private void jBtnPesquisarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnPesquisarActionPerformed
         JDlgVendedorPesquisar jDlgVendedorPesquisar = new JDlgVendedorPesquisar(null, true);
-        jDlgVendedorPesquisar.setTelaPai(this);
+        jDlgVendedorPesquisar.setTelaAnterior(this);
         jDlgVendedorPesquisar.setVisible(true);
     }//GEN-LAST:event_jBtnPesquisarActionPerformed
 

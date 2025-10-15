@@ -63,7 +63,7 @@
                                   <Component id="jLabel6" min="-2" max="-2" attributes="0"/>
                                   <Component id="jFmtDataContratacao" min="-2" pref="126" max="-2" attributes="0"/>
                                   <Component id="jTxtSalario" min="-2" pref="126" max="-2" attributes="0"/>
-                                  <Component id="jLabel7" min="-2" pref="37" max="-2" attributes="0"/>
+                                  <Component id="jLabel7" alignment="0" min="-2" pref="116" max="-2" attributes="0"/>
                               </Group>
                           </Group>
                           <Component id="jFmtEmail" alignment="0" min="-2" pref="405" max="-2" attributes="0"/>

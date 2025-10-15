@@ -4,6 +4,7 @@
  */
 package view;
 
+import bean.RpsProdutos;
 import java.awt.Color;
 import java.awt.Image;
 import javax.swing.ImageIcon;
@@ -14,16 +15,16 @@ import java.util.logging.Logger;
 import javax.swing.text.DefaultFormatterFactory;
 import javax.swing.text.MaskFormatter;
 import tools.Util;
+import dao.ProdutosDAO;
 
 public class JDlgProdutos extends javax.swing.JDialog {
 
-    boolean incluir = false;
+    private boolean incluir;
     private MaskFormatter mascaraDataNasc;
 
     public JDlgProdutos(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
-        setTitle("Cadastro de Produtos");
         setLocationRelativeTo(null);
         jLabel1.setForeground(Color.BLACK);
         jLabel2.setForeground(Color.BLACK);
@@ -47,6 +48,96 @@ public class JDlgProdutos extends javax.swing.JDialog {
         } catch (ParseException ex) {
             Logger.getLogger(JDlgProdutos.class.getName()).log(Level.SEVERE, null, ex);
         }
+
+        // === FORMATAÇÃO AUTOMÁTICA DE SALDO COM R$ ===
+        jFmtValor.addKeyListener(new java.awt.event.KeyAdapter() {
+            @Override
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                // Remove tudo que não for número
+                String texto = jFmtValor.getText().replaceAll("[^0-9]", "");
+
+                if (texto.isEmpty()) {
+                    jFmtValor.setText("R$ 0,00");
+                    return;
+                }
+
+                // Garante pelo menos 3 dígitos (para manter 2 casas decimais)
+                while (texto.length() < 3) {
+                    texto = "0" + texto;
+                }
+
+                try {
+                    double valor = Double.parseDouble(texto) / 100.0;
+                    java.text.DecimalFormat df = new java.text.DecimalFormat("#,##0.00");
+                    jFmtValor.setText("R$ " + df.format(valor));
+                } catch (NumberFormatException e) {
+                    // em caso de erro de conversão, reseta o campo
+                    jFmtValor.setText("R$ 0,00");
+                }
+            }
+
+            @Override
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                // bloqueia qualquer caractere que não seja número
+                char c = evt.getKeyChar();
+                if (!Character.isDigit(c)) {
+                    evt.consume();
+                }
+            }
+        });
+
+        // inicializa o campo bonitinho
+        jFmtValor.setText("R$ 0,00");
+        jFmtValor.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        jFmtValor.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 14));
+        jFmtValor.setForeground(new java.awt.Color(34, 139, 34)); // verde "saldo positivo"
+
+        iniciarRelogio("Cadastro de Produtos"); // coloque o nome do usuário logado aqui
+    }
+
+    private void iniciarRelogio(String nomeUsuario) {
+        javax.swing.Timer timer = new javax.swing.Timer(1000, e -> {
+            java.text.SimpleDateFormat sdfHora = new java.text.SimpleDateFormat("HH:mm:ss");
+            java.text.SimpleDateFormat sdfData = new java.text.SimpleDateFormat("EEEE, dd 'de' MMMM 'de' yyyy");
+
+            String hora = sdfHora.format(new java.util.Date());
+            String data = sdfData.format(new java.util.Date());
+
+            // Capitaliza o dia da semana
+            data = data.substring(0, 1).toUpperCase() + data.substring(1);
+
+            // Define título com usuário, data e hora
+            setTitle(nomeUsuario + " | " + data + " | " + hora);
+        });
+        timer.start();
+    }
+
+    public void beanView(RpsProdutos produtos) {
+        jTxtCodigoJogo.setText(Util.intToStr(produtos.getRpsIdJogo()));
+        jTxtNomeJogo.setText(produtos.getRpsNome());
+        jTxtQuantEstoque.setText(Util.intToStr(produtos.getRpsQuantEstoque()));
+        jFmtValor.setText(Util.doubleToStr(produtos.getRpsValor()));
+        jFmtAnoLançamento.setText(Util.dateToStr(produtos.getRpsAnoLancamento()));
+        jCboGeneroJogo.setSelectedIndex(produtos.getRpsGenero());
+        jCboPlataforma.setSelectedIndex(produtos.getRpsPlataforma());
+    }
+
+    public RpsProdutos viewBean() {
+        RpsProdutos Rpsprodutos = new RpsProdutos();
+        int cod = Util.strToInt(jTxtCodigoJogo.getText());
+        Rpsprodutos.setRpsIdJogo(cod);
+        Rpsprodutos.setRpsNome(jTxtNomeJogo.getText());
+        int quantidade = Util.strToInt(jTxtQuantEstoque.getText());
+        Rpsprodutos.setRpsQuantEstoque(quantidade);
+        Rpsprodutos.setRpsValor(Util.strToDouble(jFmtValor.getText()));
+        try {
+            Rpsprodutos.setRpsAnoLancamento(Util.strToDate(jFmtAnoLançamento.getText()));
+        } catch (ParseException ex) {
+            Logger.getLogger(JDlgProdutos.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        Rpsprodutos.setRpsGenero(jCboGeneroJogo.getSelectedIndex());
+        Rpsprodutos.setRpsPlataforma(jCboPlataforma.getSelectedIndex());
+        return Rpsprodutos;
     }
 
     /**
@@ -297,15 +388,17 @@ public class JDlgProdutos extends javax.swing.JDialog {
     }//GEN-LAST:event_jFmtValorActionPerformed
 
     private void jBtnConfirmarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnConfirmarActionPerformed
+        ProdutosDAO produtosDAO = new ProdutosDAO();
+        RpsProdutos Rpsprodutos = viewBean();
+        if (incluir == true) {
+            produtosDAO.insert(Rpsprodutos);
+
+        } else {
+            produtosDAO.update(Rpsprodutos);
+        }
         Util.habilitar(false, jBtnConfirmar, jBtnCancelar, jTxtCodigoJogo, jTxtNomeJogo, jTxtQuantEstoque, jFmtAnoLançamento, jFmtValor, jCboGeneroJogo, jCboPlataforma);
         Util.habilitar(true, jBtnIncluir, jBtnExcluir, jBtnAlterar, jBtnPesquisar);
         Util.limpar(jTxtCodigoJogo, jTxtNomeJogo, jTxtQuantEstoque, jFmtAnoLançamento, jFmtValor, jCboGeneroJogo, jCboPlataforma);
-        Util.strToInt(jTxtCodigoJogo.getText());
-        try {
-            Util.strToDate(jFmtAnoLançamento.getText());
-        } catch (ParseException ex) {
-            Logger.getLogger(JDlgProdutos.class.getName()).log(Level.SEVERE, null, ex);
-        }
     }//GEN-LAST:event_jBtnConfirmarActionPerformed
 
     private void jBtnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnCancelarActionPerformed
@@ -315,6 +408,10 @@ public class JDlgProdutos extends javax.swing.JDialog {
     }//GEN-LAST:event_jBtnCancelarActionPerformed
 
     private void jBtnAlterarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnAlterarActionPerformed
+        if (jTxtCodigoJogo.getText().trim().isEmpty()) {
+            Util.mensagem("Pesquise um usuário antes de Alterar");
+            return;
+        }
         Util.habilitar(true, jBtnConfirmar, jBtnCancelar, jTxtCodigoJogo, jTxtNomeJogo, jTxtQuantEstoque, jFmtAnoLançamento, jFmtValor, jCboGeneroJogo, jCboPlataforma);
         Util.habilitar(false, jBtnIncluir, jBtnExcluir, jBtnAlterar, jBtnPesquisar);
         Util.habilitar(false, jTxtCodigoJogo);
@@ -324,19 +421,20 @@ public class JDlgProdutos extends javax.swing.JDialog {
 
     private void jBtnPesquisarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnPesquisarActionPerformed
         JDlgProdutosPesquisar jDlgProdutosPesquisar = new JDlgProdutosPesquisar(null, true);
-        jDlgProdutosPesquisar.setTelaPai(this);
+        jDlgProdutosPesquisar.setTelaAnterior(this);
         jDlgProdutosPesquisar.setVisible(true);
     }//GEN-LAST:event_jBtnPesquisarActionPerformed
 
     private void jBtnExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnExcluirActionPerformed
-        if (Util.pergunta("Deseja excluir?")) {
-
+        if (jTxtCodigoJogo.getText().trim().isEmpty()) {
+            Util.mensagem("Pesquise um usuário antes de Excluir");
+            return;
         }
-        Util.strToInt(jTxtCodigoJogo.getText());
-        try {
-            Util.strToDate(jFmtAnoLançamento.getText());
-        } catch (ParseException ex) {
-            Logger.getLogger(JDlgProdutos.class.getName()).log(Level.SEVERE, null, ex);
+
+        if (Util.pergunta("Deseja excluir ?") == true) {
+            ProdutosDAO produtosDAO = new ProdutosDAO();
+            RpsProdutos rpsProdutos = viewBean();
+            produtosDAO.delete(rpsProdutos);
         }
         Util.limpar(jTxtCodigoJogo, jTxtNomeJogo, jTxtQuantEstoque, jFmtAnoLançamento, jFmtValor, jCboGeneroJogo, jCboPlataforma);
     }//GEN-LAST:event_jBtnExcluirActionPerformed

@@ -25,7 +25,6 @@ public class JDlgUsuarios extends javax.swing.JDialog {
     public JDlgUsuarios(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
-        setTitle("Cadastro de Usuários");
         setLocationRelativeTo(null);
         jLabel1.setForeground(Color.WHITE);
         jLabel2.setForeground(Color.WHITE);
@@ -53,6 +52,24 @@ public class JDlgUsuarios extends javax.swing.JDialog {
         } catch (ParseException ex) {
             Logger.getLogger(JDlgUsuarios.class.getName()).log(Level.SEVERE, null, ex);
         }
+        iniciarRelogio("Cadastro de Usuários"); // coloque o nome do usuário logado aqui
+    }
+
+    private void iniciarRelogio(String nomeUsuario) {
+        javax.swing.Timer timer = new javax.swing.Timer(1000, e -> {
+            java.text.SimpleDateFormat sdfHora = new java.text.SimpleDateFormat("HH:mm:ss");
+            java.text.SimpleDateFormat sdfData = new java.text.SimpleDateFormat("EEEE, dd 'de' MMMM 'de' yyyy");
+
+            String hora = sdfHora.format(new java.util.Date());
+            String data = sdfData.format(new java.util.Date());
+
+            // Capitaliza o dia da semana
+            data = data.substring(0, 1).toUpperCase() + data.substring(1);
+
+            // Define título com usuário, data e hora
+            setTitle(nomeUsuario + " | " + data + " | " + hora);
+        });
+        timer.start();
     }
 
     public void beanView(RpsUsuarios usuarios) {
@@ -340,7 +357,7 @@ public class JDlgUsuarios extends javax.swing.JDialog {
 
     private void jBtnAlterarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnAlterarActionPerformed
         if (jTxtCodigo.getText().trim().isEmpty()) {
-            Util.mensagem("Pesquise um usuário antes de Alterar");
+            Util.mensagem("Pesquise um Usuário antes de Alterar");
             return;
         }
         Util.habilitar(true, jBtnConfirmar, jBtnCancelar, jTxtCodigo, jTxtNome, jTxtApelido, jFmtCpf, jFmtDataNascimento, jCboNivel, jChbAtivo, jPwdSenha);
@@ -352,7 +369,7 @@ public class JDlgUsuarios extends javax.swing.JDialog {
 
     private void jBtnExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnExcluirActionPerformed
         if (jTxtCodigo.getText().trim().isEmpty()) {
-            Util.mensagem("Pesquise um usuário antes de Excluir");
+            Util.mensagem("Pesquise um Usuário antes de Excluir");
             return;
         }
 
