@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JDialog.java to edit this template
- */
 package view;
 
 import bean.RpsVendedor;
@@ -43,27 +39,27 @@ public class JDlgVendedor extends javax.swing.JDialog {
         getContentPane().add(background);
         getContentPane().setComponentZOrder(background, getContentPane().getComponentCount() - 1);
 
-        Util.habilitar(false, jBtnConfirmar, jBtnCancelar, jTxtCodigo, jTxtNome, jTxtSalario, jFmtCpf, jFmtDataContratacao, jFmtEmail, jFmtTelefone);
+        Util.habilitar(false, rps_jBtnConfirmar, rps_jBtnCancelar, rps_jTxtCodigo, rps_jTxtNome, rps_jTxtSalario, rps_jFmtCpf, rps_jFmtDataContratacao, rps_jFmtEmail, rps_jFmtTelefone);
         try {
             mascaraCpf = new MaskFormatter("###.###.###-##");
             mascaraTel = new MaskFormatter("(##)#####-####");
             mascaraDataContratacao = new MaskFormatter("##/##/####");
-            jFmtCpf.setFormatterFactory(new DefaultFormatterFactory(mascaraCpf));
-            jFmtTelefone.setFormatterFactory(new DefaultFormatterFactory(mascaraTel));
-            jFmtDataContratacao.setFormatterFactory(new DefaultFormatterFactory(mascaraDataContratacao));
+            rps_jFmtCpf.setFormatterFactory(new DefaultFormatterFactory(mascaraCpf));
+            rps_jFmtTelefone.setFormatterFactory(new DefaultFormatterFactory(mascaraTel));
+            rps_jFmtDataContratacao.setFormatterFactory(new DefaultFormatterFactory(mascaraDataContratacao));
         } catch (ParseException ex) {
             Logger.getLogger(JDlgVendedor.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         // === FORMATAÇÃO AUTOMÁTICA DE SALDO COM R$ ===
-        jTxtSalario.addKeyListener(new java.awt.event.KeyAdapter() {
+        rps_jTxtSalario.addKeyListener(new java.awt.event.KeyAdapter() {
             @Override
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 // Remove tudo que não for número
-                String texto = jTxtSalario.getText().replaceAll("[^0-9]", "");
+                String texto = rps_jTxtSalario.getText().replaceAll("[^0-9]", "");
 
                 if (texto.isEmpty()) {
-                    jTxtSalario.setText("R$ 0,00");
+                    rps_jTxtSalario.setText("R$ 0,00");
                     return;
                 }
 
@@ -75,10 +71,10 @@ public class JDlgVendedor extends javax.swing.JDialog {
                 try {
                     double valor = Double.parseDouble(texto) / 100.0;
                     java.text.DecimalFormat df = new java.text.DecimalFormat("#,##0.00");
-                    jTxtSalario.setText("R$ " + df.format(valor));
+                    rps_jTxtSalario.setText("R$ " + df.format(valor));
                 } catch (NumberFormatException e) {
                     // em caso de erro de conversão, reseta o campo
-                    jTxtSalario.setText("R$ 0,00");
+                    rps_jTxtSalario.setText("R$ 0,00");
                 }
             }
 
@@ -93,38 +89,34 @@ public class JDlgVendedor extends javax.swing.JDialog {
         });
 
         // inicializa o campo bonitinho
-        jTxtSalario.setText("R$ 0,00");
-        jTxtSalario.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
-        jTxtSalario.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 14));
-        jTxtSalario.setForeground(new java.awt.Color(34, 139, 34)); // verde "saldo positivo"
+        rps_jTxtSalario.setText("R$ 0,00");
+        rps_jTxtSalario.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        rps_jTxtSalario.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 14));
+        rps_jTxtSalario.setForeground(new java.awt.Color(34, 139, 34)); // verde "saldo positivo"
 
         iniciarRelogio("Cadastro de Vendedores"); // coloque o nome do usuário logado aqui
     }
 
     public void beanView(RpsVendedor vendedor) {
-        jTxtCodigo.setText(Util.intToStr(vendedor.getRpsIdvendedor()));
-        jTxtNome.setText(vendedor.getRpsNome());
-        jTxtSalario.setText(Util.doubleToStr(vendedor.getRpsSalario()));
-        jFmtCpf.setText(vendedor.getRpsCpf());
-        jFmtEmail.setText(vendedor.getRpsEmail());
-        jFmtTelefone.setText(vendedor.getRpsTelefone());
-        jFmtDataContratacao.setText(Util.dateToStr(vendedor.getRpsDataContratacao()));
+        rps_jTxtCodigo.setText(Util.intToStr(vendedor.getRpsIdvendedor()));
+        rps_jTxtNome.setText(vendedor.getRpsNome());
+        rps_jTxtSalario.setText(Util.doubleToStr(vendedor.getRpsSalario()));
+        rps_jFmtCpf.setText(vendedor.getRpsCpf());
+        rps_jFmtEmail.setText(vendedor.getRpsEmail());
+        rps_jFmtTelefone.setText(vendedor.getRpsTelefone());
+        rps_jFmtDataContratacao.setText(Util.dateToStr(vendedor.getRpsDataContratacao()));
     }
 
     public RpsVendedor viewBean() {
         RpsVendedor Rpsvendedor = new RpsVendedor();
-        int cod = Util.strToInt(jTxtCodigo.getText());
+        int cod = Util.strToInt(rps_jTxtCodigo.getText());
         Rpsvendedor.setRpsIdvendedor(cod);
-        Rpsvendedor.setRpsNome(jTxtNome.getText());
-        Rpsvendedor.setRpsSalario(Util.strToDouble(jTxtSalario.getText()));
-        Rpsvendedor.setRpsCpf(jFmtCpf.getText());
-        Rpsvendedor.setRpsEmail(jFmtEmail.getText());
-        Rpsvendedor.setRpsTelefone(jFmtTelefone.getText());
-        try {
-            Rpsvendedor.setRpsDataContratacao(Util.strToDate(jFmtDataContratacao.getText()));
-        } catch (ParseException ex) {
-            Logger.getLogger(JDlgVendedor.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        Rpsvendedor.setRpsNome(rps_jTxtNome.getText());
+        Rpsvendedor.setRpsSalario(Util.strToDouble(rps_jTxtSalario.getText()));
+        Rpsvendedor.setRpsCpf(rps_jFmtCpf.getText());
+        Rpsvendedor.setRpsEmail(rps_jFmtEmail.getText());
+        Rpsvendedor.setRpsTelefone(rps_jFmtTelefone.getText());
+        Rpsvendedor.setRpsDataContratacao(Util.strToDate(rps_jFmtDataContratacao.getText()));
         return Rpsvendedor;
     }
 
@@ -155,25 +147,25 @@ public class JDlgVendedor extends javax.swing.JDialog {
     private void initComponents() {
 
         jLabel1 = new javax.swing.JLabel();
-        jTxtCodigo = new javax.swing.JTextField();
+        rps_jTxtCodigo = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
-        jTxtNome = new javax.swing.JTextField();
+        rps_jTxtNome = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
-        jFmtCpf = new javax.swing.JFormattedTextField();
+        rps_jFmtCpf = new javax.swing.JFormattedTextField();
         jLabel4 = new javax.swing.JLabel();
-        jFmtTelefone = new javax.swing.JFormattedTextField();
+        rps_jFmtTelefone = new javax.swing.JFormattedTextField();
         jLabel5 = new javax.swing.JLabel();
-        jFmtEmail = new javax.swing.JFormattedTextField();
+        rps_jFmtEmail = new javax.swing.JFormattedTextField();
         jLabel6 = new javax.swing.JLabel();
-        jFmtDataContratacao = new javax.swing.JFormattedTextField();
+        rps_jFmtDataContratacao = new javax.swing.JFormattedTextField();
         jLabel7 = new javax.swing.JLabel();
-        jTxtSalario = new javax.swing.JTextField();
-        jBtnIncluir = new javax.swing.JButton();
-        jBtnAlterar = new javax.swing.JButton();
-        jBtnExcluir = new javax.swing.JButton();
-        jBtnConfirmar = new javax.swing.JButton();
-        jBtnCancelar = new javax.swing.JButton();
-        jBtnPesquisar = new javax.swing.JButton();
+        rps_jTxtSalario = new javax.swing.JTextField();
+        rps_jBtnIncluir = new javax.swing.JButton();
+        rps_jBtnAlterar = new javax.swing.JButton();
+        rps_jBtnExcluir = new javax.swing.JButton();
+        rps_jBtnConfirmar = new javax.swing.JButton();
+        rps_jBtnCancelar = new javax.swing.JButton();
+        rps_jBtnPesquisar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -192,9 +184,9 @@ public class JDlgVendedor extends javax.swing.JDialog {
         jLabel5.setDisplayedMnemonic('e');
         jLabel5.setText("E-mail");
 
-        jFmtEmail.addActionListener(new java.awt.event.ActionListener() {
+        rps_jFmtEmail.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jFmtEmailActionPerformed(evt);
+                rps_jFmtEmailActionPerformed(evt);
             }
         });
 
@@ -204,51 +196,51 @@ public class JDlgVendedor extends javax.swing.JDialog {
         jLabel7.setDisplayedMnemonic('s');
         jLabel7.setText("Salário");
 
-        jBtnIncluir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/incluir.png"))); // NOI18N
-        jBtnIncluir.setText("Incluir");
-        jBtnIncluir.addActionListener(new java.awt.event.ActionListener() {
+        rps_jBtnIncluir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/incluir.png"))); // NOI18N
+        rps_jBtnIncluir.setText("Incluir");
+        rps_jBtnIncluir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jBtnIncluirActionPerformed(evt);
+                rps_jBtnIncluirActionPerformed(evt);
             }
         });
 
-        jBtnAlterar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/alterar.png"))); // NOI18N
-        jBtnAlterar.setText("Alterar");
-        jBtnAlterar.addActionListener(new java.awt.event.ActionListener() {
+        rps_jBtnAlterar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/alterar.png"))); // NOI18N
+        rps_jBtnAlterar.setText("Alterar");
+        rps_jBtnAlterar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jBtnAlterarActionPerformed(evt);
+                rps_jBtnAlterarActionPerformed(evt);
             }
         });
 
-        jBtnExcluir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/Excluir.png"))); // NOI18N
-        jBtnExcluir.setText("Excluir");
-        jBtnExcluir.addActionListener(new java.awt.event.ActionListener() {
+        rps_jBtnExcluir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/Excluir.png"))); // NOI18N
+        rps_jBtnExcluir.setText("Excluir");
+        rps_jBtnExcluir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jBtnExcluirActionPerformed(evt);
+                rps_jBtnExcluirActionPerformed(evt);
             }
         });
 
-        jBtnConfirmar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/gravar.png"))); // NOI18N
-        jBtnConfirmar.setText("Confirmar");
-        jBtnConfirmar.addActionListener(new java.awt.event.ActionListener() {
+        rps_jBtnConfirmar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/gravar.png"))); // NOI18N
+        rps_jBtnConfirmar.setText("Confirmar");
+        rps_jBtnConfirmar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jBtnConfirmarActionPerformed(evt);
+                rps_jBtnConfirmarActionPerformed(evt);
             }
         });
 
-        jBtnCancelar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/cancelar.png"))); // NOI18N
-        jBtnCancelar.setText("Cancelar");
-        jBtnCancelar.addActionListener(new java.awt.event.ActionListener() {
+        rps_jBtnCancelar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/cancelar.png"))); // NOI18N
+        rps_jBtnCancelar.setText("Cancelar");
+        rps_jBtnCancelar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jBtnCancelarActionPerformed(evt);
+                rps_jBtnCancelarActionPerformed(evt);
             }
         });
 
-        jBtnPesquisar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/pesquisar.png"))); // NOI18N
-        jBtnPesquisar.setText("Pesquisar");
-        jBtnPesquisar.addActionListener(new java.awt.event.ActionListener() {
+        rps_jBtnPesquisar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/pesquisar.png"))); // NOI18N
+        rps_jBtnPesquisar.setText("Pesquisar");
+        rps_jBtnPesquisar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jBtnPesquisarActionPerformed(evt);
+                rps_jBtnPesquisarActionPerformed(evt);
             }
         });
 
@@ -261,39 +253,39 @@ public class JDlgVendedor extends javax.swing.JDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(jTxtNome, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(rps_jTxtNome, javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                                .addComponent(jBtnIncluir)
+                                .addComponent(rps_jBtnIncluir)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jBtnAlterar)
+                                .addComponent(rps_jBtnAlterar)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jBtnExcluir)
+                                .addComponent(rps_jBtnExcluir)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jBtnConfirmar)
+                                .addComponent(rps_jBtnConfirmar)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jBtnCancelar)))
+                                .addComponent(rps_jBtnCancelar)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jBtnPesquisar)
+                        .addComponent(rps_jBtnPesquisar)
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jFmtCpf, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                     .addComponent(jLabel2)
                                     .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(jLabel4)
-                                    .addComponent(jFmtTelefone, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(jLabel1)
-                                    .addComponent(jTxtCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(28, 28, 28)
+                                    .addComponent(rps_jTxtCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(rps_jFmtCpf, javax.swing.GroupLayout.DEFAULT_SIZE, 110, Short.MAX_VALUE)
+                                    .addComponent(rps_jFmtTelefone))
+                                .addGap(44, 44, 44)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                     .addComponent(jLabel6)
-                                    .addComponent(jFmtDataContratacao, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jTxtSalario, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addComponent(jFmtEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 405, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(rps_jTxtSalario, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(rps_jFmtDataContratacao, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(rps_jFmtEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 405, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(0, 0, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
@@ -302,71 +294,71 @@ public class JDlgVendedor extends javax.swing.JDialog {
                 .addContainerGap()
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTxtCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(rps_jTxtCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(9, 9, 9)
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTxtNome, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(rps_jTxtNome, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(15, 15, 15)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
                     .addComponent(jLabel6))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jFmtCpf, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jFmtDataContratacao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(rps_jFmtCpf, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(rps_jFmtDataContratacao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
                     .addComponent(jLabel7))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jFmtTelefone, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTxtSalario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(rps_jFmtTelefone, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(rps_jTxtSalario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(21, 21, 21)
                 .addComponent(jLabel5)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jFmtEmail, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(rps_jFmtEmail, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 22, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jBtnIncluir)
-                    .addComponent(jBtnAlterar)
-                    .addComponent(jBtnExcluir)
-                    .addComponent(jBtnConfirmar)
-                    .addComponent(jBtnCancelar)
-                    .addComponent(jBtnPesquisar))
+                    .addComponent(rps_jBtnIncluir)
+                    .addComponent(rps_jBtnAlterar)
+                    .addComponent(rps_jBtnExcluir)
+                    .addComponent(rps_jBtnConfirmar)
+                    .addComponent(rps_jBtnCancelar)
+                    .addComponent(rps_jBtnPesquisar))
                 .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jFmtEmailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jFmtEmailActionPerformed
+    private void rps_jFmtEmailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rps_jFmtEmailActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jFmtEmailActionPerformed
+    }//GEN-LAST:event_rps_jFmtEmailActionPerformed
 
-    private void jBtnIncluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnIncluirActionPerformed
-        Util.habilitar(true, jBtnConfirmar, jBtnCancelar, jTxtCodigo, jTxtNome, jTxtSalario, jFmtCpf, jFmtDataContratacao, jFmtEmail, jFmtTelefone);
-        Util.limpar(jTxtCodigo, jTxtNome, jTxtSalario, jFmtCpf, jFmtDataContratacao, jFmtEmail, jFmtTelefone);
-        Util.habilitar(false, jBtnIncluir, jBtnExcluir, jBtnAlterar, jBtnPesquisar);
-        jTxtCodigo.grabFocus();
+    private void rps_jBtnIncluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rps_jBtnIncluirActionPerformed
+        Util.habilitar(true, rps_jBtnConfirmar, rps_jBtnCancelar, rps_jTxtCodigo, rps_jTxtNome, rps_jTxtSalario, rps_jFmtCpf, rps_jFmtDataContratacao, rps_jFmtEmail, rps_jFmtTelefone);
+        Util.limpar(rps_jTxtCodigo, rps_jTxtNome, rps_jTxtSalario, rps_jFmtCpf, rps_jFmtDataContratacao, rps_jFmtEmail, rps_jFmtTelefone);
+        Util.habilitar(false, rps_jBtnIncluir, rps_jBtnExcluir, rps_jBtnAlterar, rps_jBtnPesquisar);
+        rps_jTxtCodigo.grabFocus();
         incluir = true;
-    }//GEN-LAST:event_jBtnIncluirActionPerformed
+    }//GEN-LAST:event_rps_jBtnIncluirActionPerformed
 
-    private void jBtnAlterarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnAlterarActionPerformed
-        if (jTxtCodigo.getText().trim().isEmpty()) {
+    private void rps_jBtnAlterarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rps_jBtnAlterarActionPerformed
+        if (rps_jTxtCodigo.getText().trim().isEmpty()) {
             Util.mensagem("Pesquise um vendedor antes de Alterar");
             return;
         }
-        Util.habilitar(true, jBtnConfirmar, jBtnCancelar, jTxtNome, jTxtSalario, jFmtCpf, jFmtDataContratacao, jFmtEmail, jFmtTelefone);
-        Util.habilitar(false, jBtnIncluir, jBtnExcluir, jBtnAlterar, jBtnPesquisar);
-        Util.habilitar(false, jTxtCodigo);
-        jTxtNome.grabFocus();
+        Util.habilitar(true, rps_jBtnConfirmar, rps_jBtnCancelar, rps_jTxtNome, rps_jTxtSalario, rps_jFmtCpf, rps_jFmtDataContratacao, rps_jFmtEmail, rps_jFmtTelefone);
+        Util.habilitar(false, rps_jBtnIncluir, rps_jBtnExcluir, rps_jBtnAlterar, rps_jBtnPesquisar);
+        Util.habilitar(false, rps_jTxtCodigo);
+        rps_jTxtNome.grabFocus();
         incluir = false;
-    }//GEN-LAST:event_jBtnAlterarActionPerformed
+    }//GEN-LAST:event_rps_jBtnAlterarActionPerformed
 
-    private void jBtnExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnExcluirActionPerformed
-        if (jTxtCodigo.getText().trim().isEmpty()) {
+    private void rps_jBtnExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rps_jBtnExcluirActionPerformed
+        if (rps_jTxtCodigo.getText().trim().isEmpty()) {
             Util.mensagem("Pesquise um vendedor antes de Excluir");
             return;
         }
@@ -376,10 +368,10 @@ public class JDlgVendedor extends javax.swing.JDialog {
             RpsVendedor rpsVendedor = viewBean();
             vendedorDAO.delete(rpsVendedor);
         }
-        Util.limpar(jTxtCodigo, jTxtNome, jTxtSalario, jFmtCpf, jFmtDataContratacao, jFmtEmail, jFmtTelefone);
-    }//GEN-LAST:event_jBtnExcluirActionPerformed
+        Util.limpar(rps_jTxtCodigo, rps_jTxtNome, rps_jTxtSalario, rps_jFmtCpf, rps_jFmtDataContratacao, rps_jFmtEmail, rps_jFmtTelefone);
+    }//GEN-LAST:event_rps_jBtnExcluirActionPerformed
 
-    private void jBtnConfirmarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnConfirmarActionPerformed
+    private void rps_jBtnConfirmarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rps_jBtnConfirmarActionPerformed
         VendedorDAO vendedorDAO = new VendedorDAO();
         RpsVendedor rpsVendedor = viewBean();
         if (incluir == true) {
@@ -388,22 +380,22 @@ public class JDlgVendedor extends javax.swing.JDialog {
         } else {
             vendedorDAO.update(rpsVendedor);
         }
-        Util.habilitar(false, jBtnConfirmar, jBtnCancelar, jTxtCodigo, jTxtNome, jTxtSalario, jFmtCpf, jFmtDataContratacao, jFmtEmail, jFmtTelefone);
-        Util.habilitar(true, jBtnIncluir, jBtnExcluir, jBtnAlterar, jBtnPesquisar);
-        Util.limpar(jTxtCodigo, jTxtNome, jTxtSalario, jFmtCpf, jFmtDataContratacao, jFmtEmail, jFmtTelefone);
-    }//GEN-LAST:event_jBtnConfirmarActionPerformed
+        Util.habilitar(false, rps_jBtnConfirmar, rps_jBtnCancelar, rps_jTxtCodigo, rps_jTxtNome, rps_jTxtSalario, rps_jFmtCpf, rps_jFmtDataContratacao, rps_jFmtEmail, rps_jFmtTelefone);
+        Util.habilitar(true, rps_jBtnIncluir, rps_jBtnExcluir, rps_jBtnAlterar, rps_jBtnPesquisar);
+        Util.limpar(rps_jTxtCodigo, rps_jTxtNome, rps_jTxtSalario, rps_jFmtCpf, rps_jFmtDataContratacao, rps_jFmtEmail, rps_jFmtTelefone);
+    }//GEN-LAST:event_rps_jBtnConfirmarActionPerformed
 
-    private void jBtnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnCancelarActionPerformed
-        Util.habilitar(false, jBtnConfirmar, jBtnCancelar, jTxtCodigo, jTxtNome, jTxtSalario, jFmtCpf, jFmtDataContratacao, jFmtEmail, jFmtTelefone);
-        Util.habilitar(true, jBtnIncluir, jBtnExcluir, jBtnAlterar, jBtnPesquisar);
-        Util.limpar(jTxtCodigo, jTxtNome, jTxtSalario, jFmtCpf, jFmtDataContratacao, jFmtEmail, jFmtTelefone);
-    }//GEN-LAST:event_jBtnCancelarActionPerformed
+    private void rps_jBtnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rps_jBtnCancelarActionPerformed
+        Util.habilitar(false, rps_jBtnConfirmar, rps_jBtnCancelar, rps_jTxtCodigo, rps_jTxtNome, rps_jTxtSalario, rps_jFmtCpf, rps_jFmtDataContratacao, rps_jFmtEmail, rps_jFmtTelefone);
+        Util.habilitar(true, rps_jBtnIncluir, rps_jBtnExcluir, rps_jBtnAlterar, rps_jBtnPesquisar);
+        Util.limpar(rps_jTxtCodigo, rps_jTxtNome, rps_jTxtSalario, rps_jFmtCpf, rps_jFmtDataContratacao, rps_jFmtEmail, rps_jFmtTelefone);
+    }//GEN-LAST:event_rps_jBtnCancelarActionPerformed
 
-    private void jBtnPesquisarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnPesquisarActionPerformed
+    private void rps_jBtnPesquisarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rps_jBtnPesquisarActionPerformed
         JDlgVendedorPesquisar jDlgVendedorPesquisar = new JDlgVendedorPesquisar(null, true);
         jDlgVendedorPesquisar.setTelaAnterior(this);
         jDlgVendedorPesquisar.setVisible(true);
-    }//GEN-LAST:event_jBtnPesquisarActionPerformed
+    }//GEN-LAST:event_rps_jBtnPesquisarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -448,16 +440,6 @@ public class JDlgVendedor extends javax.swing.JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jBtnAlterar;
-    private javax.swing.JButton jBtnCancelar;
-    private javax.swing.JButton jBtnConfirmar;
-    private javax.swing.JButton jBtnExcluir;
-    private javax.swing.JButton jBtnIncluir;
-    private javax.swing.JButton jBtnPesquisar;
-    private javax.swing.JFormattedTextField jFmtCpf;
-    private javax.swing.JFormattedTextField jFmtDataContratacao;
-    private javax.swing.JFormattedTextField jFmtEmail;
-    private javax.swing.JFormattedTextField jFmtTelefone;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -465,9 +447,19 @@ public class JDlgVendedor extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
-    private javax.swing.JTextField jTxtCodigo;
-    private javax.swing.JTextField jTxtNome;
-    private javax.swing.JTextField jTxtSalario;
+    private javax.swing.JButton rps_jBtnAlterar;
+    private javax.swing.JButton rps_jBtnCancelar;
+    private javax.swing.JButton rps_jBtnConfirmar;
+    private javax.swing.JButton rps_jBtnExcluir;
+    private javax.swing.JButton rps_jBtnIncluir;
+    private javax.swing.JButton rps_jBtnPesquisar;
+    private javax.swing.JFormattedTextField rps_jFmtCpf;
+    private javax.swing.JFormattedTextField rps_jFmtDataContratacao;
+    private javax.swing.JFormattedTextField rps_jFmtEmail;
+    private javax.swing.JFormattedTextField rps_jFmtTelefone;
+    private javax.swing.JTextField rps_jTxtCodigo;
+    private javax.swing.JTextField rps_jTxtNome;
+    private javax.swing.JTextField rps_jTxtSalario;
     // End of variables declaration//GEN-END:variables
 
 }

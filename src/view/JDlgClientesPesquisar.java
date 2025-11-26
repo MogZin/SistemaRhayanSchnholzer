@@ -1,26 +1,15 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JDialog.java to edit this template
- */
 package view;
 
 import bean.RpsClientes;
 import dao.ClientesDAO;
 import java.util.List;
-import view.JDlgClientes;
+import tools.Util;
 
-/**
- *
- * @author bruno
- */
 public class JDlgClientesPesquisar extends javax.swing.JDialog {
 
     private JDlgClientes jDlgClientes;
     ControllerClientes controllerClientes;
 
-    /**
-     * Creates new form JDlgClientesPesquisar
-     */
     public JDlgClientesPesquisar(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
@@ -30,7 +19,7 @@ public class JDlgClientesPesquisar extends javax.swing.JDialog {
         ClientesDAO clientesDAO = new ClientesDAO();
         List lista = (List) clientesDAO.listAll();
         controllerClientes.setList(lista);
-        jTable1.setModel(controllerClientes);
+        rps_jTable.setModel(controllerClientes);
     }
 
     public void setTelaAnterior(JDlgClientes jDlgClientes) {
@@ -46,20 +35,20 @@ public class JDlgClientesPesquisar extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jBtnOk = new javax.swing.JButton();
+        rps_jBtnOk = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        rps_jTable = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
-        jBtnOk.setText("Ok");
-        jBtnOk.addActionListener(new java.awt.event.ActionListener() {
+        rps_jBtnOk.setText("Ok");
+        rps_jBtnOk.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jBtnOkActionPerformed(evt);
+                rps_jBtnOkActionPerformed(evt);
             }
         });
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        rps_jTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -70,7 +59,12 @@ public class JDlgClientesPesquisar extends javax.swing.JDialog {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jScrollPane1.setViewportView(jTable1);
+        rps_jTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                rps_jTableMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(rps_jTable);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -78,30 +72,41 @@ public class JDlgClientesPesquisar extends javax.swing.JDialog {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jBtnOk)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 375, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(19, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 696, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(0, 0, 0)
+                        .addComponent(rps_jBtnOk)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jBtnOk)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(rps_jBtnOk)
+                .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jBtnOkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnOkActionPerformed
-        // TODO add your handling code here:
-        RpsClientes clientes = controllerClientes.getBean(jTable1.getSelectedRow());
-        jDlgClientes.beanView(clientes);
-        this.setVisible(false);
-    }//GEN-LAST:event_jBtnOkActionPerformed
+    private void rps_jBtnOkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rps_jBtnOkActionPerformed
+        if (rps_jTable.getSelectedRow() == -1) {
+            Util.mensagem("Nenhum registro foi selecionada. Favor selecionar um registro.");
+        } else {
+            RpsClientes clientes = controllerClientes.getBean(rps_jTable.getSelectedRow());
+            jDlgClientes.beanView(clientes);
+            this.setVisible(false);
+        }
+    }//GEN-LAST:event_rps_jBtnOkActionPerformed
+
+    private void rps_jTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_rps_jTableMouseClicked
+        if (evt.getClickCount() == 2) {
+            rps_jBtnOkActionPerformed(null);
+        }
+    }//GEN-LAST:event_rps_jTableMouseClicked
 
     /**
      * @param args the command line arguments
@@ -146,8 +151,8 @@ public class JDlgClientesPesquisar extends javax.swing.JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jBtnOk;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
+    private javax.swing.JButton rps_jBtnOk;
+    private javax.swing.JTable rps_jTable;
     // End of variables declaration//GEN-END:variables
 }

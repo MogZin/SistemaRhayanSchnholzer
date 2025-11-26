@@ -1,12 +1,9 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JDialog.java to edit this template
- */
 package view;
 
 import bean.RpsClientes;
-import bean.RpsUsuarios;
 import bean.RpsVendas;
+import bean.RpsVendasProdutos;
+import bean.RpsVendedor;
 import java.awt.Color;
 import java.awt.Image;
 import javax.swing.ImageIcon;
@@ -19,11 +16,14 @@ import javax.swing.text.MaskFormatter;
 import tools.Util;
 import dao.VendasDAO;
 import dao.ClientesDAO;
-import dao.UsuariosDAO;
+import dao.VendasProdutosDAO;
+import dao.VendedorDAO;
+import java.util.ArrayList;
 import java.util.List;
 
 public class JDlgVendas extends javax.swing.JDialog {
 
+    ControllerVendasProdutos controllerVenProd;
     private boolean incluir;
     boolean pesquisado = false;
     private MaskFormatter mascaraDataVenda;
@@ -37,14 +37,17 @@ public class JDlgVendas extends javax.swing.JDialog {
         ClientesDAO clientesDAO = new ClientesDAO();
         List lista = (List) clientesDAO.listAll();
         for (int i = 0; i < lista.size(); i++) {
-            jCboClientes.addItem((RpsClientes) lista.get(i));
+            rps_jCboClientes.addItem((RpsClientes) lista.get(i));
         }
 
-        UsuariosDAO usuariosDAO = new UsuariosDAO();
-        List lista2 = (List) usuariosDAO.listAll();
+        VendedorDAO vendedorDAO = new VendedorDAO();
+        List lista2 = (List) vendedorDAO.listAll();
         for (int i = 0; i < lista2.size(); i++) {
-            jCboUsuarios.addItem((RpsUsuarios) lista2.get(i));
+            rps_jCboVendedor.addItem((RpsVendedor) lista2.get(i));
         }
+        controllerVenProd = new ControllerVendasProdutos();
+        controllerVenProd.setList(new ArrayList());
+        jTable1.setModel(controllerVenProd);
         jLabel1.setForeground(Color.WHITE);
         jLabel2.setForeground(Color.WHITE);
         jLabel3.setForeground(Color.WHITE);
@@ -61,23 +64,23 @@ public class JDlgVendas extends javax.swing.JDialog {
         getContentPane().add(background);
         getContentPane().setComponentZOrder(background, getContentPane().getComponentCount() - 1);
 
-        Util.habilitar(false, jBtnConfirmar, jBtnCancelar, jTxtCodigo, jFmtDataVenda, jCboClientes, jTxtDesconto, jTxtTotal, jCboUsuarios, jCboFormaPagamento);
+        Util.habilitar(false, rps_jBtnConfirmar, rps_jBtnCancelar, rps_jTxtCodigo, rps_jFmtDataVenda, rps_jCboClientes, rps_jTxtDesconto, rps_jTxtTotal, rps_jCboVendedor, rps_jCboFormaPagamento);
         try {
             mascaraDataVenda = new MaskFormatter("##/##/####");
-            jFmtDataVenda.setFormatterFactory(new DefaultFormatterFactory(mascaraDataVenda));
+            rps_jFmtDataVenda.setFormatterFactory(new DefaultFormatterFactory(mascaraDataVenda));
         } catch (ParseException ex) {
             Logger.getLogger(JDlgVendas.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         // === FORMATAÇÃO AUTOMÁTICA DE SALDO COM R$ ===
-        jTxtTotal.addKeyListener(new java.awt.event.KeyAdapter() {
+        rps_jTxtTotal.addKeyListener(new java.awt.event.KeyAdapter() {
             @Override
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 // Remove tudo que não for número
-                String texto = jTxtTotal.getText().replaceAll("[^0-9]", "");
+                String texto = rps_jTxtTotal.getText().replaceAll("[^0-9]", "");
 
                 if (texto.isEmpty()) {
-                    jTxtTotal.setText("R$ 0,00");
+                    rps_jTxtTotal.setText("R$ 0,00");
                     return;
                 }
 
@@ -89,10 +92,10 @@ public class JDlgVendas extends javax.swing.JDialog {
                 try {
                     double valor = Double.parseDouble(texto) / 100.0;
                     java.text.DecimalFormat df = new java.text.DecimalFormat("#,##0.00");
-                    jTxtTotal.setText("R$ " + df.format(valor));
+                    rps_jTxtTotal.setText("R$ " + df.format(valor));
                 } catch (NumberFormatException e) {
                     // em caso de erro de conversão, reseta o campo
-                    jTxtTotal.setText("R$ 0,00");
+                    rps_jTxtTotal.setText("R$ 0,00");
                 }
             }
 
@@ -107,26 +110,26 @@ public class JDlgVendas extends javax.swing.JDialog {
         });
 
         // inicializa o campo bonitinho
-        jTxtTotal.setText("R$ 0,00");
-        jTxtTotal.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
-        jTxtTotal.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 14));
-        jTxtTotal.setForeground(new java.awt.Color(34, 139, 34)); // verde "saldo positivo"
+        rps_jTxtTotal.setText("R$ 0,00");
+        rps_jTxtTotal.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        rps_jTxtTotal.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 14));
+        rps_jTxtTotal.setForeground(new java.awt.Color(34, 139, 34)); // verde "saldo positivo"
 
         // inicializa o campo bonitinho
-        jTxtDesconto.setText("R$ 0,00");
-        jTxtDesconto.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
-        jTxtDesconto.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 14));
-        jTxtDesconto.setForeground(new java.awt.Color(34, 139, 34)); // verde "saldo positivo"
+        rps_jTxtDesconto.setText("R$ 0,00");
+        rps_jTxtDesconto.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        rps_jTxtDesconto.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 14));
+        rps_jTxtDesconto.setForeground(new java.awt.Color(34, 139, 34)); // verde "saldo positivo"
 
         // === FORMATAÇÃO AUTOMÁTICA DE SALDO COM R$ ===
-        jTxtDesconto.addKeyListener(new java.awt.event.KeyAdapter() {
+        rps_jTxtDesconto.addKeyListener(new java.awt.event.KeyAdapter() {
             @Override
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 // Remove tudo que não for número
-                String texto = jTxtDesconto.getText().replaceAll("[^0-9]", "");
+                String texto = rps_jTxtDesconto.getText().replaceAll("[^0-9]", "");
 
                 if (texto.isEmpty()) {
-                    jTxtDesconto.setText("R$ 0,00");
+                    rps_jTxtDesconto.setText("R$ 0,00");
                     return;
                 }
 
@@ -138,10 +141,10 @@ public class JDlgVendas extends javax.swing.JDialog {
                 try {
                     double valor = Double.parseDouble(texto) / 100.0;
                     java.text.DecimalFormat df = new java.text.DecimalFormat("#,##0.00");
-                    jTxtDesconto.setText("R$ " + df.format(valor));
+                    rps_jTxtDesconto.setText("R$ " + df.format(valor));
                 } catch (NumberFormatException e) {
                     // em caso de erro de conversão, reseta o campo
-                    jTxtDesconto.setText("R$ 0,00");
+                    rps_jTxtDesconto.setText("R$ 0,00");
                 }
             }
 
@@ -156,10 +159,10 @@ public class JDlgVendas extends javax.swing.JDialog {
         });
 
         // inicializa o campo bonitinho
-        jTxtDesconto.setText("R$ 0,00");
-        jTxtDesconto.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
-        jTxtDesconto.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 14));
-        jTxtDesconto.setForeground(new java.awt.Color(34, 139, 34)); // verde "saldo positivo"
+        rps_jTxtDesconto.setText("R$ 0,00");
+        rps_jTxtDesconto.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        rps_jTxtDesconto.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 14));
+        rps_jTxtDesconto.setForeground(new java.awt.Color(34, 139, 34)); // verde "saldo positivo"
 
         iniciarRelogio("Cadastro de Vendas"); // coloque o nome do usuário logado aqui
     }
@@ -183,24 +186,27 @@ public class JDlgVendas extends javax.swing.JDialog {
 
     public RpsVendas viewBean() {
         RpsVendas rpsVendas = new RpsVendas();
-        rpsVendas.setRpsIdVendas(Util.strToInt(jTxtCodigo.getText()));
-        try {
-            rpsVendas.setRpsDataVenda(Util.strToDate(jFmtDataVenda.getText()));
-        } catch (ParseException ex) {
-            Logger.getLogger(JDlgVendas.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        rpsVendas.setRpsTotal(Util.strToDouble(jTxtTotal.getText()));
-        rpsVendas.setRpsClientes((RpsClientes) jCboClientes.getSelectedItem());
-        rpsVendas.setRpsUsuarios((RpsUsuarios) jCboUsuarios.getSelectedItem());
+        rpsVendas.setRpsIdVendas(Util.strToInt(rps_jTxtCodigo.getText()));
+        rpsVendas.setRpsDataVenda(Util.strToDate(rps_jFmtDataVenda.getText()));
+        rpsVendas.setRpsTotal(Util.strToDouble(rps_jTxtTotal.getText()));
+        rpsVendas.setRpsDesconto(Util.strToDouble(rps_jTxtDesconto.getText()));
+        rpsVendas.setRpsClientes((RpsClientes) rps_jCboClientes.getSelectedItem());
+        rpsVendas.setRpsVendedor((RpsVendedor) rps_jCboVendedor.getSelectedItem());
+        rpsVendas.setRpsFormaPagamento(rps_jCboFormaPagamento.getSelectedIndex());
         return rpsVendas;
     }
 
     public void beanView(RpsVendas rpsVendas) {
-        jTxtCodigo.setText(Util.intToStr(rpsVendas.getRpsIdVendas()));
-        jTxtDesconto.setText(Util.doubleToStr(rpsVendas.getRpsDesconto()));
-        jTxtTotal.setText(Util.doubleToStr(rpsVendas.getRpsTotal()));
-        jFmtDataVenda.setText(Util.dateToStr(rpsVendas.getRpsDataVenda()));
-        jCboFormaPagamento.setSelectedIndex(rpsVendas.getRpsFormaPagamento());
+        rps_jTxtCodigo.setText(Util.intToStr(rpsVendas.getRpsIdVendas()));
+        rps_jTxtDesconto.setText(Util.doubleToStr(rpsVendas.getRpsDesconto()));
+        rps_jTxtTotal.setText(Util.doubleToStr(rpsVendas.getRpsTotal()));
+        rps_jFmtDataVenda.setText(Util.dateToStr(rpsVendas.getRpsDataVenda()));
+        rps_jCboFormaPagamento.setSelectedIndex(rpsVendas.getRpsFormaPagamento());
+        rps_jCboClientes.setSelectedItem(rpsVendas.getRpsClientes());
+        rps_jCboVendedor.setSelectedItem(rpsVendas.getRpsVendedor());
+        VendasProdutosDAO vendasProdutosDAO = new VendasProdutosDAO();
+        List lista = (List) vendasProdutosDAO.listProdutos(rpsVendas);
+        controllerVenProd.setList(lista);
     }
 
     /**
@@ -213,30 +219,30 @@ public class JDlgVendas extends javax.swing.JDialog {
     private void initComponents() {
 
         jLabel1 = new javax.swing.JLabel();
-        jTxtCodigo = new javax.swing.JTextField();
+        rps_jTxtCodigo = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
-        jFmtDataVenda = new javax.swing.JFormattedTextField();
+        rps_jFmtDataVenda = new javax.swing.JFormattedTextField();
         jLabel7 = new javax.swing.JLabel();
-        jCboFormaPagamento = new javax.swing.JComboBox<>();
+        rps_jCboFormaPagamento = new javax.swing.JComboBox<>();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
-        jTxtTotal = new javax.swing.JTextField();
+        rps_jTxtTotal = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
-        jTxtDesconto = new javax.swing.JTextField();
+        rps_jTxtDesconto = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
-        jBtnIncluir = new javax.swing.JButton();
-        jBtnAlterar = new javax.swing.JButton();
-        jBtnExcluir = new javax.swing.JButton();
-        jBtnConfirmar = new javax.swing.JButton();
-        jBtnCancelar = new javax.swing.JButton();
-        jBtnPesquisar = new javax.swing.JButton();
-        jBtnIncluirProd = new javax.swing.JButton();
-        jBtnAlterarProd = new javax.swing.JButton();
-        jBtnExcluirProd = new javax.swing.JButton();
-        jCboClientes = new javax.swing.JComboBox<RpsClientes>();
-        jCboUsuarios = new javax.swing.JComboBox<RpsUsuarios>();
+        rps_jBtnIncluir = new javax.swing.JButton();
+        rps_jBtnAlterar = new javax.swing.JButton();
+        rps_jBtnExcluir = new javax.swing.JButton();
+        rps_jBtnConfirmar = new javax.swing.JButton();
+        rps_jBtnCancelar = new javax.swing.JButton();
+        rps_jBtnPesquisar = new javax.swing.JButton();
+        rps_jBtnIncluirProd = new javax.swing.JButton();
+        rps_jBtnAlterarProd = new javax.swing.JButton();
+        rps_jBtnExcluirProd = new javax.swing.JButton();
+        rps_jCboClientes = new javax.swing.JComboBox<RpsClientes>();
+        rps_jCboVendedor = new javax.swing.JComboBox<RpsVendedor>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -249,13 +255,13 @@ public class JDlgVendas extends javax.swing.JDialog {
         jLabel7.setDisplayedMnemonic('F');
         jLabel7.setText("Forma de Pagamento");
 
-        jCboFormaPagamento.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Dinheiro", "Cartão de Crédito", "Cartão de Dédito", "Pix" }));
+        rps_jCboFormaPagamento.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Dinheiro", "Cartão de Crédito", "Cartão de Dédito", "Pix" }));
 
         jLabel3.setDisplayedMnemonic('C');
         jLabel3.setText("Cliente");
 
         jLabel4.setDisplayedMnemonic('U');
-        jLabel4.setText("Usuários");
+        jLabel4.setText("Vendedor");
 
         jLabel5.setDisplayedMnemonic('T');
         jLabel5.setText("Total");
@@ -263,9 +269,9 @@ public class JDlgVendas extends javax.swing.JDialog {
         jLabel6.setDisplayedMnemonic('D');
         jLabel6.setText("Desconto");
 
-        jTxtDesconto.addActionListener(new java.awt.event.ActionListener() {
+        rps_jTxtDesconto.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTxtDescontoActionPerformed(evt);
+                rps_jTxtDescontoActionPerformed(evt);
             }
         });
 
@@ -282,72 +288,72 @@ public class JDlgVendas extends javax.swing.JDialog {
         ));
         jScrollPane1.setViewportView(jTable1);
 
-        jBtnIncluir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/incluir.png"))); // NOI18N
-        jBtnIncluir.setText("Incluir");
-        jBtnIncluir.addActionListener(new java.awt.event.ActionListener() {
+        rps_jBtnIncluir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/incluir.png"))); // NOI18N
+        rps_jBtnIncluir.setText("Incluir");
+        rps_jBtnIncluir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jBtnIncluirActionPerformed(evt);
+                rps_jBtnIncluirActionPerformed(evt);
             }
         });
 
-        jBtnAlterar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/alterar.png"))); // NOI18N
-        jBtnAlterar.setText("Alterar");
-        jBtnAlterar.addActionListener(new java.awt.event.ActionListener() {
+        rps_jBtnAlterar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/alterar.png"))); // NOI18N
+        rps_jBtnAlterar.setText("Alterar");
+        rps_jBtnAlterar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jBtnAlterarActionPerformed(evt);
+                rps_jBtnAlterarActionPerformed(evt);
             }
         });
 
-        jBtnExcluir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/Excluir.png"))); // NOI18N
-        jBtnExcluir.setText("Excluir");
-        jBtnExcluir.addActionListener(new java.awt.event.ActionListener() {
+        rps_jBtnExcluir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/Excluir.png"))); // NOI18N
+        rps_jBtnExcluir.setText("Excluir");
+        rps_jBtnExcluir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jBtnExcluirActionPerformed(evt);
+                rps_jBtnExcluirActionPerformed(evt);
             }
         });
 
-        jBtnConfirmar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/gravar.png"))); // NOI18N
-        jBtnConfirmar.setText("Confirmar");
-        jBtnConfirmar.addActionListener(new java.awt.event.ActionListener() {
+        rps_jBtnConfirmar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/gravar.png"))); // NOI18N
+        rps_jBtnConfirmar.setText("Confirmar");
+        rps_jBtnConfirmar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jBtnConfirmarActionPerformed(evt);
+                rps_jBtnConfirmarActionPerformed(evt);
             }
         });
 
-        jBtnCancelar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/cancelar.png"))); // NOI18N
-        jBtnCancelar.setText("Cancelar");
-        jBtnCancelar.addActionListener(new java.awt.event.ActionListener() {
+        rps_jBtnCancelar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/cancelar.png"))); // NOI18N
+        rps_jBtnCancelar.setText("Cancelar");
+        rps_jBtnCancelar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jBtnCancelarActionPerformed(evt);
+                rps_jBtnCancelarActionPerformed(evt);
             }
         });
 
-        jBtnPesquisar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/pesquisar.png"))); // NOI18N
-        jBtnPesquisar.setText("Pesquisar");
-        jBtnPesquisar.addActionListener(new java.awt.event.ActionListener() {
+        rps_jBtnPesquisar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/pesquisar.png"))); // NOI18N
+        rps_jBtnPesquisar.setText("Pesquisar");
+        rps_jBtnPesquisar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jBtnPesquisarActionPerformed(evt);
+                rps_jBtnPesquisarActionPerformed(evt);
             }
         });
 
-        jBtnIncluirProd.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/incluir.png"))); // NOI18N
-        jBtnIncluirProd.addActionListener(new java.awt.event.ActionListener() {
+        rps_jBtnIncluirProd.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/incluir.png"))); // NOI18N
+        rps_jBtnIncluirProd.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jBtnIncluirProdActionPerformed(evt);
+                rps_jBtnIncluirProdActionPerformed(evt);
             }
         });
 
-        jBtnAlterarProd.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/alterar.png"))); // NOI18N
-        jBtnAlterarProd.addActionListener(new java.awt.event.ActionListener() {
+        rps_jBtnAlterarProd.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/alterar.png"))); // NOI18N
+        rps_jBtnAlterarProd.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jBtnAlterarProdActionPerformed(evt);
+                rps_jBtnAlterarProdActionPerformed(evt);
             }
         });
 
-        jBtnExcluirProd.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/Excluir.png"))); // NOI18N
-        jBtnExcluirProd.addActionListener(new java.awt.event.ActionListener() {
+        rps_jBtnExcluirProd.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/Excluir.png"))); // NOI18N
+        rps_jBtnExcluirProd.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jBtnExcluirProdActionPerformed(evt);
+                rps_jBtnExcluirProdActionPerformed(evt);
             }
         });
 
@@ -361,62 +367,56 @@ public class JDlgVendas extends javax.swing.JDialog {
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jTxtCodigo)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(13, 13, 13)
-                                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addGap(19, 19, 19)))
+                            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(rps_jTxtCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addGap(16, 16, 16)
                                 .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addGap(18, 18, 18)
+                                .addGap(48, 48, 48)
                                 .addComponent(jLabel3)
-                                .addGap(26, 26, 26))
+                                .addGap(69, 69, 69))
                             .addGroup(layout.createSequentialGroup()
+                                .addComponent(rps_jFmtDataVenda, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jFmtDataVenda, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(14, 14, 14)
-                                .addComponent(jCboClientes, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                .addComponent(rps_jCboClientes, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jCboUsuarios, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(32, 32, 32)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jTxtTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jTxtDesconto, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jCboFormaPagamento, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(23, 23, 23)
-                                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(33, 33, 33)
-                                .addComponent(jLabel6)
-                                .addGap(26, 26, 26)
-                                .addComponent(jLabel7)
-                                .addGap(0, 0, Short.MAX_VALUE))))
+                                .addComponent(rps_jCboVendedor, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addComponent(jLabel4)
+                                .addGap(81, 81, 81)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(rps_jTxtDesconto, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel6))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel7)
+                            .addComponent(rps_jCboFormaPagamento, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(jBtnIncluir)
+                        .addGap(0, 30, Short.MAX_VALUE)
+                        .addComponent(rps_jBtnIncluir)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jBtnAlterar)
+                        .addComponent(rps_jBtnAlterar)
                         .addGap(12, 12, 12)
-                        .addComponent(jBtnExcluir)
+                        .addComponent(rps_jBtnExcluir)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jBtnConfirmar)
+                        .addComponent(rps_jBtnConfirmar)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jBtnCancelar)
+                        .addComponent(rps_jBtnCancelar)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jBtnPesquisar)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(rps_jBtnPesquisar)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(jBtnIncluirProd)
-                        .addComponent(jBtnAlterarProd, javax.swing.GroupLayout.Alignment.TRAILING))
-                    .addComponent(jBtnExcluirProd, javax.swing.GroupLayout.Alignment.TRAILING))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(rps_jBtnIncluirProd)
+                            .addComponent(rps_jBtnAlterarProd, javax.swing.GroupLayout.Alignment.TRAILING))
+                        .addComponent(rps_jBtnExcluirProd, javax.swing.GroupLayout.Alignment.TRAILING))
+                    .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(rps_jTxtTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -429,121 +429,145 @@ public class JDlgVendas extends javax.swing.JDialog {
                         .addComponent(jLabel7)
                         .addComponent(jLabel6))
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel1)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel3)
-                            .addComponent(jLabel4))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(jLabel1)
+                                .addComponent(jLabel2)
+                                .addComponent(jLabel3))
+                            .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.TRAILING))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jTxtCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jFmtDataVenda, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jCboFormaPagamento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jTxtTotal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jTxtDesconto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jCboClientes, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jCboUsuarios, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(rps_jTxtCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(rps_jFmtDataVenda, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(rps_jCboFormaPagamento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(rps_jTxtTotal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(rps_jTxtDesconto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(rps_jCboClientes, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(rps_jCboVendedor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jBtnIncluirProd)
+                        .addComponent(rps_jBtnIncluirProd)
                         .addGap(4, 4, 4)
-                        .addComponent(jBtnAlterarProd)
+                        .addComponent(rps_jBtnAlterarProd)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jBtnExcluirProd)))
+                        .addComponent(rps_jBtnExcluirProd)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jBtnPesquisar)
-                    .addComponent(jBtnCancelar)
-                    .addComponent(jBtnConfirmar)
-                    .addComponent(jBtnExcluir)
-                    .addComponent(jBtnAlterar)
-                    .addComponent(jBtnIncluir))
+                    .addComponent(rps_jBtnPesquisar)
+                    .addComponent(rps_jBtnCancelar)
+                    .addComponent(rps_jBtnConfirmar)
+                    .addComponent(rps_jBtnExcluir)
+                    .addComponent(rps_jBtnAlterar)
+                    .addComponent(rps_jBtnIncluir))
                 .addContainerGap(10, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jTxtDescontoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTxtDescontoActionPerformed
+    private void rps_jTxtDescontoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rps_jTxtDescontoActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTxtDescontoActionPerformed
+    }//GEN-LAST:event_rps_jTxtDescontoActionPerformed
 
-    private void jBtnIncluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnIncluirActionPerformed
-        Util.habilitar(true, jBtnConfirmar, jBtnCancelar, jTxtCodigo, jFmtDataVenda, jCboClientes, jTxtDesconto, jTxtTotal, jCboUsuarios, jCboFormaPagamento);
-        Util.limpar(jTxtCodigo, jFmtDataVenda, jCboClientes, jTxtDesconto, jTxtTotal, jCboUsuarios, jCboFormaPagamento);
-        Util.habilitar(false, jBtnIncluir, jBtnExcluir, jBtnAlterar, jBtnPesquisar);
-        jTxtCodigo.grabFocus();
+    private void rps_jBtnIncluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rps_jBtnIncluirActionPerformed
+        Util.habilitar(true, rps_jBtnConfirmar, rps_jBtnCancelar, rps_jTxtCodigo, rps_jFmtDataVenda, rps_jCboClientes, rps_jTxtDesconto, rps_jTxtTotal, rps_jCboVendedor, rps_jCboFormaPagamento);
+        Util.limpar(rps_jTxtCodigo, rps_jFmtDataVenda, rps_jCboClientes, rps_jTxtDesconto, rps_jTxtTotal, rps_jCboVendedor, rps_jCboFormaPagamento);
+        Util.habilitar(false, rps_jBtnIncluir, rps_jBtnExcluir, rps_jBtnAlterar, rps_jBtnPesquisar);
+        rps_jTxtCodigo.grabFocus();
         incluir = true;
-    }//GEN-LAST:event_jBtnIncluirActionPerformed
+        controllerVenProd.setList(new ArrayList());
+    }//GEN-LAST:event_rps_jBtnIncluirActionPerformed
 
-    private void jBtnAlterarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnAlterarActionPerformed
-        if (jTxtCodigo.getText().trim().isEmpty()) {
+    private void rps_jBtnAlterarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rps_jBtnAlterarActionPerformed
+        if (rps_jTxtCodigo.getText().trim().isEmpty()) {
             Util.mensagem("Pesquise uma Vendas antes de Alterar");
             return;
         }
-        Util.habilitar(true, jBtnConfirmar, jBtnCancelar, jTxtCodigo, jFmtDataVenda, jCboClientes, jTxtDesconto, jTxtTotal, jCboUsuarios, jCboFormaPagamento);
-        Util.habilitar(false, jBtnIncluir, jBtnExcluir, jBtnAlterar, jBtnPesquisar);
-        Util.habilitar(false, jTxtCodigo);
-        jFmtDataVenda.grabFocus();
+        Util.habilitar(true, rps_jBtnConfirmar, rps_jBtnCancelar, rps_jTxtCodigo, rps_jFmtDataVenda, rps_jCboClientes, rps_jTxtDesconto, rps_jTxtTotal, rps_jCboVendedor, rps_jCboFormaPagamento);
+        Util.habilitar(false, rps_jBtnIncluir, rps_jBtnExcluir, rps_jBtnAlterar, rps_jBtnPesquisar);
+        Util.habilitar(false, rps_jTxtCodigo);
+        rps_jFmtDataVenda.grabFocus();
         incluir = false;
-    }//GEN-LAST:event_jBtnAlterarActionPerformed
+    }//GEN-LAST:event_rps_jBtnAlterarActionPerformed
 
-    private void jBtnExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnExcluirActionPerformed
-        if (jTxtCodigo.getText().trim().isEmpty()) {
+    private void rps_jBtnExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rps_jBtnExcluirActionPerformed
+        if (rps_jTxtCodigo.getText().trim().isEmpty()) {
             Util.mensagem("Pesquise uma Venda antes de Excluir");
             return;
         }
 
         if (Util.pergunta("Deseja excluir ?") == true) {
             VendasDAO rpsVendasDAO = new VendasDAO();
-            RpsVendas rpsVendas = viewBean();
-            rpsVendasDAO.delete(rpsVendas);
+            VendasProdutosDAO vendasProdutosDAO = new VendasProdutosDAO();
+            for (int ind = 0; ind < jTable1.getRowCount(); ind++) {
+                RpsVendasProdutos rpsVendasProdutos = controllerVenProd.getBean(ind);
+                vendasProdutosDAO.delete(rpsVendasProdutos);
+            }
+            rpsVendasDAO.delete(viewBean());
         }
-        Util.limpar(jTxtCodigo, jFmtDataVenda, jCboClientes, jTxtDesconto, jTxtTotal, jCboUsuarios, jCboFormaPagamento);
-    }//GEN-LAST:event_jBtnExcluirActionPerformed
+        Util.limpar(rps_jTxtCodigo, rps_jFmtDataVenda, rps_jCboClientes, rps_jTxtDesconto, rps_jTxtTotal, rps_jCboVendedor, rps_jCboFormaPagamento);
+        controllerVenProd.setList(new ArrayList());
+    }//GEN-LAST:event_rps_jBtnExcluirActionPerformed
 
-    private void jBtnConfirmarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnConfirmarActionPerformed
+    private void rps_jBtnConfirmarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rps_jBtnConfirmarActionPerformed
+        // TODO add your handling code here:
         VendasDAO vendasDAO = new VendasDAO();
+        VendasProdutosDAO vendasProdutosDAO = new VendasProdutosDAO();
+        RpsVendas rpsVendas = viewBean();
         if (incluir == true) {
-            vendasDAO.insert(viewBean());
-
+            vendasDAO.insert(rpsVendas);
+            for (int ind = 0; ind < jTable1.getRowCount(); ind++) {
+                RpsVendasProdutos rpsVendasProdutos = controllerVenProd.getBean(ind);
+                rpsVendasProdutos.setRpsVendas(rpsVendas);
+                vendasProdutosDAO.insert(rpsVendasProdutos);
+            }
         } else {
-            vendasDAO.update(viewBean());
+            vendasDAO.update(rpsVendas);
+
         }
-        Util.habilitar(false, jBtnConfirmar, jBtnCancelar, jTxtCodigo, jFmtDataVenda, jCboClientes, jTxtDesconto, jTxtTotal, jCboUsuarios, jCboFormaPagamento);
-        Util.habilitar(true, jBtnIncluir, jBtnExcluir, jBtnAlterar, jBtnPesquisar);
-        Util.limpar(jTxtCodigo, jFmtDataVenda, jCboClientes, jTxtDesconto, jTxtTotal, jCboUsuarios, jCboFormaPagamento);
-    }//GEN-LAST:event_jBtnConfirmarActionPerformed
 
-    private void jBtnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnCancelarActionPerformed
-        Util.habilitar(false, jBtnConfirmar, jBtnCancelar, jTxtCodigo, jFmtDataVenda, jCboClientes, jTxtDesconto, jTxtTotal, jCboUsuarios, jCboFormaPagamento);
-        Util.habilitar(true, jBtnIncluir, jBtnExcluir, jBtnAlterar, jBtnPesquisar);
-        Util.limpar(jTxtCodigo, jFmtDataVenda, jCboClientes, jTxtDesconto, jTxtTotal, jCboUsuarios, jCboFormaPagamento);
-    }//GEN-LAST:event_jBtnCancelarActionPerformed
+        Util.habilitar(false, rps_jBtnConfirmar, rps_jBtnCancelar, rps_jTxtCodigo, rps_jFmtDataVenda, rps_jCboClientes, rps_jTxtDesconto, rps_jTxtDesconto, rps_jTxtTotal, rps_jCboVendedor, rps_jCboFormaPagamento);
+        Util.habilitar(true, rps_jBtnIncluir, rps_jBtnExcluir, rps_jBtnAlterar, rps_jBtnPesquisar);
+        Util.limpar(rps_jTxtCodigo, rps_jFmtDataVenda, rps_jCboClientes, rps_jTxtDesconto, rps_jTxtTotal, rps_jCboVendedor, rps_jCboFormaPagamento);
+        controllerVenProd.setList(new ArrayList());
+    }//GEN-LAST:event_rps_jBtnConfirmarActionPerformed
 
-    private void jBtnPesquisarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnPesquisarActionPerformed
+    private void rps_jBtnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rps_jBtnCancelarActionPerformed
+        Util.habilitar(false, rps_jBtnConfirmar, rps_jBtnCancelar, rps_jTxtCodigo, rps_jFmtDataVenda, rps_jCboClientes, rps_jTxtDesconto, rps_jTxtTotal, rps_jCboVendedor, rps_jCboFormaPagamento);
+        Util.habilitar(true, rps_jBtnIncluir, rps_jBtnExcluir, rps_jBtnAlterar, rps_jBtnPesquisar);
+        Util.limpar(rps_jTxtCodigo, rps_jFmtDataVenda, rps_jCboClientes, rps_jTxtDesconto, rps_jTxtTotal, rps_jCboVendedor, rps_jCboFormaPagamento);
+        controllerVenProd.setList(new ArrayList());
+    }//GEN-LAST:event_rps_jBtnCancelarActionPerformed
+
+    private void rps_jBtnPesquisarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rps_jBtnPesquisarActionPerformed
         JDlgVendasPesquisar jDlgVendasPesquisar = new JDlgVendasPesquisar(null, true);
         jDlgVendasPesquisar.setTelaAnterior(this);
         jDlgVendasPesquisar.setVisible(true);
         pesquisado = true;
-    }//GEN-LAST:event_jBtnPesquisarActionPerformed
+    }//GEN-LAST:event_rps_jBtnPesquisarActionPerformed
 
-    private void jBtnIncluirProdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnIncluirProdActionPerformed
+    private void rps_jBtnIncluirProdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rps_jBtnIncluirProdActionPerformed
+        JDlgVendasProdutos jDlgVendasProdutos = new JDlgVendasProdutos(null, true);
+        jDlgVendasProdutos.setTelaAnterior(this);
+        jDlgVendasProdutos.setVisible(true);
+    }//GEN-LAST:event_rps_jBtnIncluirProdActionPerformed
+
+    private void rps_jBtnAlterarProdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rps_jBtnAlterarProdActionPerformed
         JDlgVendasProdutos jDlgVendasProdutos = new JDlgVendasProdutos(null, true);
         jDlgVendasProdutos.setVisible(true);
-    }//GEN-LAST:event_jBtnIncluirProdActionPerformed
+    }//GEN-LAST:event_rps_jBtnAlterarProdActionPerformed
 
-    private void jBtnAlterarProdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnAlterarProdActionPerformed
-        JDlgVendasProdutos jDlgVendasProdutos = new JDlgVendasProdutos(null, true);
-        jDlgVendasProdutos.setVisible(true);
-    }//GEN-LAST:event_jBtnAlterarProdActionPerformed
-
-    private void jBtnExcluirProdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnExcluirProdActionPerformed
-        JDlgVendasProdutos jDlgVendasProdutos = new JDlgVendasProdutos(null, true);
-        jDlgVendasProdutos.setVisible(true);
-    }//GEN-LAST:event_jBtnExcluirProdActionPerformed
+    private void rps_jBtnExcluirProdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rps_jBtnExcluirProdActionPerformed
+        if (jTable1.getSelectedRow() == -1) {
+            Util.mensagem("Precisa selecionar uma linha!");
+        } else {
+            if (Util.pergunta("Deseja excluir o produto ?") == true) {
+                controllerVenProd.removeBean(jTable1.getSelectedRow());
+            }
+        }
+    }//GEN-LAST:event_rps_jBtnExcluirProdActionPerformed
 
     /**
      * @param args the command line arguments
@@ -588,19 +612,6 @@ public class JDlgVendas extends javax.swing.JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jBtnAlterar;
-    private javax.swing.JButton jBtnAlterarProd;
-    private javax.swing.JButton jBtnCancelar;
-    private javax.swing.JButton jBtnConfirmar;
-    private javax.swing.JButton jBtnExcluir;
-    private javax.swing.JButton jBtnExcluirProd;
-    private javax.swing.JButton jBtnIncluir;
-    private javax.swing.JButton jBtnIncluirProd;
-    private javax.swing.JButton jBtnPesquisar;
-    private javax.swing.JComboBox<RpsClientes> jCboClientes;
-    private javax.swing.JComboBox<String> jCboFormaPagamento;
-    private javax.swing.JComboBox<RpsUsuarios> jCboUsuarios;
-    private javax.swing.JFormattedTextField jFmtDataVenda;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -610,8 +621,21 @@ public class JDlgVendas extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
-    private javax.swing.JTextField jTxtCodigo;
-    private javax.swing.JTextField jTxtDesconto;
-    private javax.swing.JTextField jTxtTotal;
+    private javax.swing.JButton rps_jBtnAlterar;
+    private javax.swing.JButton rps_jBtnAlterarProd;
+    private javax.swing.JButton rps_jBtnCancelar;
+    private javax.swing.JButton rps_jBtnConfirmar;
+    private javax.swing.JButton rps_jBtnExcluir;
+    private javax.swing.JButton rps_jBtnExcluirProd;
+    private javax.swing.JButton rps_jBtnIncluir;
+    private javax.swing.JButton rps_jBtnIncluirProd;
+    private javax.swing.JButton rps_jBtnPesquisar;
+    private javax.swing.JComboBox<RpsClientes> rps_jCboClientes;
+    private javax.swing.JComboBox<String> rps_jCboFormaPagamento;
+    private javax.swing.JComboBox<RpsVendedor> rps_jCboVendedor;
+    private javax.swing.JFormattedTextField rps_jFmtDataVenda;
+    private javax.swing.JTextField rps_jTxtCodigo;
+    private javax.swing.JTextField rps_jTxtDesconto;
+    private javax.swing.JTextField rps_jTxtTotal;
     // End of variables declaration//GEN-END:variables
 }

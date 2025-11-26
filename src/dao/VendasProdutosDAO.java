@@ -1,19 +1,11 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package dao;
 
+import bean.RpsVendas;
 import bean.RpsVendasProdutos;
 import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
 
-/**
- *
- * @author u07887987156
- */
 public class VendasProdutosDAO extends AbstractDAO {
 
     @Override
@@ -51,6 +43,15 @@ public class VendasProdutosDAO extends AbstractDAO {
         return lista;
     }
 
+    public Object listProdutos(RpsVendas rpsVendas) {
+        session.beginTransaction();
+        Criteria criteria = session.createCriteria(RpsVendasProdutos.class);
+        criteria.add(Restrictions.eq("rpsVendas", rpsVendas));
+        List lista = criteria.list();
+        session.getTransaction().commit();
+        return lista;
+    }
+
     @Override
     public Object listAll() {
         session.beginTransaction();
@@ -61,8 +62,8 @@ public class VendasProdutosDAO extends AbstractDAO {
     }
 
     public static void main(String[] args) {
-        VendasProdutosDAO vendedorDAO = new VendasProdutosDAO();
-        vendedorDAO.listAll();
+        VendasProdutosDAO vendasProdutosDAO = new VendasProdutosDAO();
+        vendasProdutosDAO.listAll();
     }
 
 }

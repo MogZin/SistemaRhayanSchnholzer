@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package tools;
 
 import java.text.ParseException;
@@ -12,11 +8,9 @@ import javax.swing.JTextField;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-/**
- *
- * @author u1845853
- */
 public class Util {
 
     public static void habilitar(boolean valor, JComponent... componentes) {
@@ -91,9 +85,14 @@ public class Util {
         return String.valueOf(num);
     }
 
-    public static Date strToDate(String data) throws ParseException {
+    public static Date strToDate(String data) {
         SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
-        return formato.parse(data);
+        try {
+            return formato.parse(data);
+        } catch (ParseException ex) {
+            Logger.getLogger(Util.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
     }
 
     public static String dateToStr(Date data) {

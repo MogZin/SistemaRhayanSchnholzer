@@ -1,17 +1,9 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package view;
 
 import bean.RpsVendas;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
 
-/**
- *
- * @author Marcos
- */
 public class ControllerVendas extends AbstractTableModel {
 
     private List lstVendas;
@@ -37,15 +29,15 @@ public class ControllerVendas extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        RpsVendas vendas = (RpsVendas) lstVendas.get(rowIndex);
+        RpsVendas rpsVendas = (RpsVendas) lstVendas.get(rowIndex);
         if (columnIndex == 0) {
-            return vendas.getRpsIdVendas();
+            return rpsVendas.getRpsIdVendas();
         } else if (columnIndex == 1) {
-            return vendas.getRpsTotal();
+            return rpsVendas.getRpsTotal();
         } else if (columnIndex == 2) {
-            return vendas.getRpsFormaPagamento();
+            return rpsVendas.getRpsDataVenda();
         } else if (columnIndex == 3) {
-            return vendas.getRpsDataVenda();
+            return rpsVendas.getRpsClientes().getRpsNome();
         }
         return "";
     }
@@ -57,9 +49,9 @@ public class ControllerVendas extends AbstractTableModel {
         } else if (columnIndex == 1) {
             return "Total";
         } else if (columnIndex == 2) {
-            return "Forma de Pagamento";
+            return "Data da Venda";
         } else if (columnIndex == 3) {
-            return "Data da venda";
+            return "Cliente";
         }
         return "";
     }

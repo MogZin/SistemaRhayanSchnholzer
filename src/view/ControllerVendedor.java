@@ -1,17 +1,9 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package view;
 
 import bean.RpsVendedor;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
 
-/**
- *
- * @author Marcos
- */
 public class ControllerVendedor extends AbstractTableModel {
 
     private List lstVendedor;
@@ -27,7 +19,6 @@ public class ControllerVendedor extends AbstractTableModel {
     @Override
     public int getRowCount() {
         return lstVendedor.size();
-
     }
 
     @Override
