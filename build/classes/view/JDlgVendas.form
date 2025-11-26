@@ -68,7 +68,7 @@
                       </Group>
                   </Group>
                   <Group type="102" alignment="0" attributes="0">
-                      <EmptySpace min="0" pref="30" max="32767" attributes="0"/>
+                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                       <Component id="rps_jBtnIncluir" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="rps_jBtnAlterar" min="-2" max="-2" attributes="0"/>
@@ -149,7 +149,7 @@
                   <Component id="rps_jBtnAlterar" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="rps_jBtnIncluir" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace pref="10" max="32767" attributes="0"/>
+              <EmptySpace max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
