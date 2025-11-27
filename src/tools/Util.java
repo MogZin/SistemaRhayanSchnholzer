@@ -1,6 +1,7 @@
 package tools;
 
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import javax.swing.JCheckBox;
@@ -69,72 +70,36 @@ public class Util {
         }
 
         try {
-            // Remove R$, espaços
-            String valorLimpo = valor.replace("R$", "")
-                    .replace(" ", "")
-                    .trim();
+            // Remove R$ e espaços
+            String valorLimpo = valor.replace("R$", "").replace(" ", "").trim();
 
-            // Verifica se está vazio após limpeza
             if (valorLimpo.isEmpty()) {
                 return 0.0;
             }
 
-            // Se não tem vírgula, é um número inteiro
-            if (!valorLimpo.contains(",")) {
-                return Double.parseDouble(valorLimpo);
-            }
+            // Lógica simplificada: remove pontos de milhar e converte vírgula para ponto
+            valorLimpo = valorLimpo.replace(".", "").replace(",", ".");
 
-            // Se tem vírgula, separa parte inteira e decimal
-            String[] partes = valorLimpo.split(",");
-
-            // Parte inteira - remove pontos (separadores de milhar)
-            String parteInteira = partes[0].replace(".", "");
-
-            // Parte decimal - pega até 2 dígitos
-            String parteDecimal = partes[1].length() >= 2 ? partes[1].substring(0, 2) : partes[1];
-
-            // Se a parte decimal tem apenas 1 dígito, multiplica por 10
-            // Se tem 2 dígitos, está correto
-            double valorDouble = Double.parseDouble(parteInteira + "." + parteDecimal);
-
-            return valorDouble;
+            return Double.parseDouble(valorLimpo);
 
         } catch (NumberFormatException e) {
-            System.err.println("Erro ao converter valor para double: '" + valor + "' - " + e.getMessage());
-            return 0.0;
-        } catch (Exception e) {
-            System.err.println("Erro inesperado ao converter: '" + valor + "' - " + e.getMessage());
+            System.err.println("Erro ao converter valor: '" + valor + "'");
             return 0.0;
         }
     }
 
     public static String doubleToStr(double num) {
         try {
-            // Garante que o número tenha duas casas decimais
-            DecimalFormat df = new DecimalFormat("0.00");
-            String numeroFormatado = df.format(num);
+            // Formata com separadores corretos
+            DecimalFormatSymbols symbols = new DecimalFormatSymbols();
+            symbols.setDecimalSeparator(',');
+            symbols.setGroupingSeparator('.');
 
-            // Separa parte inteira e decimal
-            String[] partes = numeroFormatado.split("\\.");
-            String parteInteira = partes[0];
-            String parteDecimal = partes[1];
+            DecimalFormat df = new DecimalFormat("#,##0.00", symbols);
 
-            // Formata parte inteira com separadores de milhar
-            StringBuilder inteiraFormatada = new StringBuilder();
-            int contador = 0;
-            for (int i = parteInteira.length() - 1; i >= 0; i--) {
-                if (contador == 3) {
-                    inteiraFormatada.insert(0, ".");
-                    contador = 0;
-                }
-                inteiraFormatada.insert(0, parteInteira.charAt(i));
-                contador++;
-            }
-
-            return "R$ " + inteiraFormatada.toString() + "," + parteDecimal;
+            return "R$ " + df.format(num);
 
         } catch (Exception e) {
-            System.err.println("Erro ao formatar double para string: " + e.getMessage());
             return "R$ 0,00";
         }
     }

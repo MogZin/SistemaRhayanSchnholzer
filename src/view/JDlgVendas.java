@@ -184,6 +184,23 @@ public class JDlgVendas extends javax.swing.JDialog {
         timer.start();
     }
 
+    private void calcularTotal() {
+        double total = 0;
+        for (int i = 0; i < jTable1.getRowCount(); i++) {
+            RpsVendasProdutos produto = controllerVenProd.getBean(i);
+            total += produto.getRpsQuantidade() * produto.getRpsValorUnitario();
+        }
+
+        // Aplica desconto se tiver
+        double desconto = Util.strToDouble(rps_jTxtDesconto.getText());
+        total = total - desconto;
+        if (total < 0) {
+            total = 0;
+        }
+
+        rps_jTxtTotal.setText("R$ " + String.format("%,.2f", total));
+    }
+
     public RpsVendas viewBean() {
         RpsVendas rpsVendas = new RpsVendas();
         rpsVendas.setRpsIdVendas(Util.strToInt(rps_jTxtCodigo.getText()));
@@ -207,6 +224,7 @@ public class JDlgVendas extends javax.swing.JDialog {
         VendasProdutosDAO vendasProdutosDAO = new VendasProdutosDAO();
         List lista = (List) vendasProdutosDAO.listProdutos(rpsVendas);
         controllerVenProd.setList(lista);
+        calcularTotal(); // ADICIONA NO FINAL
     }
 
     /**
@@ -272,6 +290,11 @@ public class JDlgVendas extends javax.swing.JDialog {
         rps_jTxtDesconto.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 rps_jTxtDescontoActionPerformed(evt);
+            }
+        });
+        rps_jTxtDesconto.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                rps_jTxtDescontoKeyReleased(evt);
             }
         });
 
@@ -396,7 +419,7 @@ public class JDlgVendas extends javax.swing.JDialog {
                             .addComponent(jLabel7)
                             .addComponent(rps_jCboFormaPagamento, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(0, 30, Short.MAX_VALUE)
+                        .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(rps_jBtnIncluir)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(rps_jBtnAlterar)
@@ -461,7 +484,7 @@ public class JDlgVendas extends javax.swing.JDialog {
                     .addComponent(rps_jBtnExcluir)
                     .addComponent(rps_jBtnAlterar)
                     .addComponent(rps_jBtnIncluir))
-                .addContainerGap(10, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -552,6 +575,7 @@ public class JDlgVendas extends javax.swing.JDialog {
         JDlgVendasProdutos jDlgVendasProdutos = new JDlgVendasProdutos(null, true);
         jDlgVendasProdutos.setTelaAnterior(this);
         jDlgVendasProdutos.setVisible(true);
+        calcularTotal(); // ADICIONA AQUI
     }//GEN-LAST:event_rps_jBtnIncluirProdActionPerformed
 
     private void rps_jBtnAlterarProdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rps_jBtnAlterarProdActionPerformed
@@ -565,9 +589,14 @@ public class JDlgVendas extends javax.swing.JDialog {
         } else {
             if (Util.pergunta("Deseja excluir o produto ?") == true) {
                 controllerVenProd.removeBean(jTable1.getSelectedRow());
+                calcularTotal(); // ADICIONA AQUI
             }
         }
     }//GEN-LAST:event_rps_jBtnExcluirProdActionPerformed
+
+    private void rps_jTxtDescontoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_rps_jTxtDescontoKeyReleased
+        calcularTotal(); // ADICIONA NO FINAL
+    }//GEN-LAST:event_rps_jTxtDescontoKeyReleased
 
     /**
      * @param args the command line arguments
